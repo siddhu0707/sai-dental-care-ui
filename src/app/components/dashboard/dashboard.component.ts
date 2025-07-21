@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { PatientBalanceService } from '../../services/patient-balance.service';
+import { PatientBalance, PatientPaymentSummary } from '../../models/patient-balance.model';
 
 @Component({
   selector: 'app-dashboard',
