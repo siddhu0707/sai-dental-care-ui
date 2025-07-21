@@ -37,19 +37,18 @@ export class PatientService {
     return this.patientsSubject.value.find(patient => patient.id === id);
   }
 
-  addPatient(patientData: CreatePatientRequest): Patient {
-    const newPatient: Patient = {
-      id: this.generateId(),
+  addPatient(patientData: CreatePatientRequest): Observable<Patient> {
+    const newPatient = {
       ...patientData,
-      registrationDate: new Date(),
+      id: this.generateId(),
+      registrationDate: new Date().toISOString(),
       totalVisits: 0,
       notes: patientData.notes || ''
     };
 
-    const currentPatients = this.patientsSubject.value;
-    this.patientsSubject.next([...currentPatients, newPatient]);
-    
-    return newPatient;
+    return this.apiService.createPatient(newPatient).pipe(
+      tap(() => this.loadPatients())
+    );
   }
 
   updatePatient(id: string, patientData: Partial<Patient>): Patient | null {
