@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { BillingService } from '../../services/billing.service';
 import { PatientService } from '../../services/patient.service';
-import { Bill, CreateBillRequest, BillStatus, PaymentMethod, ServiceTemplate, ServiceCategory, BillItem } from '../../models/billing.model';
+import { Bill, CreateBillRequest, BillStatus, PaymentMethod, ServiceTemplate, ServiceCategory, BillItem, Payment } from '../../models/billing.model';
 import { Patient } from '../../models/patient.model';
 
 @Component({
