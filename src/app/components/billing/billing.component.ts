@@ -1350,7 +1350,7 @@ export class BillingComponent implements OnInit {
       this.updateStats();
     });
 
-    this.billingService.getPayments().subscribe(payments => {
+    this.billingService.payments$.subscribe((payments: Payment[]) => {
       this.payments = payments;
     });
 
