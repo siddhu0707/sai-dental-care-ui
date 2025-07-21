@@ -651,13 +651,13 @@ import { Patient, CreatePatientRequest } from '../../models/patient.model';
     }
     
     .btn.primary {
-      background: #3b82f6;
+      background: #0ea5e9;
       color: white;
       border: none;
     }
-    
+
     .btn.primary:hover:not(:disabled) {
-      background: #2563eb;
+      background: #0284c7;
     }
     
     .btn.primary:disabled {
