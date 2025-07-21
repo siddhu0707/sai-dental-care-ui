@@ -29,9 +29,9 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
       
       <div class="billing-stats">
         <div class="stat-card revenue">
-          <div class="stat-icon">💰</div>
+          <div class="stat-icon">��</div>
           <div class="stat-content">
-            <h3 class="stat-value">₹{{ monthlyRevenue | number:'1.2-2' }}</h3>
+            <h3 class="stat-value">\${{ monthlyRevenue | number:'1.2-2' }}</h3>
             <p class="stat-label">Monthly Revenue</p>
           </div>
         </div>
@@ -39,7 +39,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
         <div class="stat-card outstanding">
           <div class="stat-icon">⏰</div>
           <div class="stat-content">
-            <h3 class="stat-value">₹{{ outstandingAmount | number:'1.2-2' }}</h3>
+            <h3 class="stat-value">\${{ outstandingAmount | number:'1.2-2' }}</h3>
             <p class="stat-label">Outstanding Amount</p>
           </div>
         </div>
@@ -118,7 +118,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
               <div class="table-cell">{{ bill.issueDate | date:'MMM d, y' }}</div>
               <div class="table-cell">{{ bill.dueDate | date:'MMM d, y' }}</div>
               <div class="table-cell">
-                <strong>₹{{ bill.total | number:'1.2-2' }}</strong>
+                <strong>\${{ bill.total | number:'1.2-2' }}</strong>
               </div>
               <div class="table-cell">
                 <span class="status-badge" [class]="bill.status">
@@ -156,7 +156,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                 <p>Reference: {{ payment.reference }}</p>
               </div>
               <div class="payment-details">
-                <div class="payment-amount">₹{{ payment.amount | number:'1.2-2' }}</div>
+                <div class="payment-amount">\${{ payment.amount | number:'1.2-2' }}</div>
                 <div class="payment-method">{{ payment.method | titlecase }}</div>
                 <div class="payment-date">{{ payment.date | date:'MMM d, y' }}</div>
               </div>
@@ -171,7 +171,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
               <div class="summary-card">
                 <h3>Total Outstanding</h3>
                 <div class="summary-amount outstanding">
-                  ₹{{ getTotalOutstandingAmount() | number:'1.2-2' }}
+                  \${{ getTotalOutstandingAmount() | number:'1.2-2' }}
                 </div>
               </div>
               <div class="summary-card">
@@ -203,14 +203,14 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                   <strong>{{ balance.patientName }}</strong>
                 </div>
                 <div class="table-cell">
-                  ₹{{ balance.totalBilled | number:'1.2-2' }}
+                  \${{ balance.totalBilled | number:'1.2-2' }}
                 </div>
                 <div class="table-cell">
-                  ₹{{ balance.totalPaid | number:'1.2-2' }}
+                  \${{ balance.totalPaid | number:'1.2-2' }}
                 </div>
                 <div class="table-cell">
                   <span class="balance-amount outstanding">
-                    ₹{{ balance.remainingBalance | number:'1.2-2' }}
+                    \${{ balance.remainingBalance | number:'1.2-2' }}
                   </span>
                 </div>
                 <div class="table-cell">
@@ -256,7 +256,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                 <span class="template-category">{{ template.category | titlecase }}</span>
               </div>
               <p class="template-description">{{ template.description }}</p>
-              <div class="template-price">₹{{ template.defaultPrice | number:'1.2-2' }}</div>
+              <div class="template-price">\${{ template.defaultPrice | number:'1.2-2' }}</div>
             </div>
           </div>
         </div>
@@ -285,7 +285,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
               </div>
               
               <div class="form-group">
-                <label>Discount (\$)</label>
+                <label>Discount (₹)</label>
                 <input type="number" formControlName="discount" class="form-input" min="0" step="0.01" />
               </div>
             </div>
@@ -339,7 +339,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                   
                   <div class="form-group">
                     <label>Total</label>
-                    <div class="total-display">₹{{ getItemTotal(i) | number:'1.2-2' }}</div>
+                    <div class="total-display">\${{ getItemTotal(i) | number:'1.2-2' }}</div>
                   </div>
                   
                   <div class="form-group">
@@ -355,19 +355,19 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
           <div class="bill-summary">
             <div class="summary-row">
               <span>Subtotal:</span>
-              <span>₹{{ calculateSubtotal() | number:'1.2-2' }}</span>
+              <span>\${{ calculateSubtotal() | number:'1.2-2' }}</span>
             </div>
             <div class="summary-row">
               <span>Tax (8%):</span>
-              <span>₹{{ calculateTax() | number:'1.2-2' }}</span>
+              <span>\${{ calculateTax() | number:'1.2-2' }}</span>
             </div>
             <div class="summary-row">
               <span>Discount:</span>
-              <span>-₹{{ billForm.get('discount')?.value || 0 | number:'1.2-2' }}</span>
+              <span>-\${{ billForm.get('discount')?.value || 0 | number:'1.2-2' }}</span>
             </div>
             <div class="summary-row total">
               <span>Total:</span>
-              <span>₹{{ calculateTotal() | number:'1.2-2' }}</span>
+              <span>\${{ calculateTotal() | number:'1.2-2' }}</span>
             </div>
           </div>
           
@@ -423,26 +423,26 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
               <div>{{ item.description }}</div>
               <div>{{ item.category | titlecase }}</div>
               <div>{{ item.quantity }}</div>
-              <div>₹{{ item.unitPrice | number:'1.2-2' }}</div>
-              <div>₹{{ item.total | number:'1.2-2' }}</div>
+              <div>\${{ item.unitPrice | number:'1.2-2' }}</div>
+              <div>\${{ item.total | number:'1.2-2' }}</div>
             </div>
           </div>
           
           <div class="bill-totals">
             <div class="totals-row">
               <span>Subtotal:</span>
-              <span>₹{{ selectedBill.subtotal | number:'1.2-2' }}</span>
+              <span>\${{ selectedBill.subtotal | number:'1.2-2' }}</span>
             </div>
             <div class="totals-row">
               <span>Tax:</span>
-              <span>₹{{ selectedBill.tax | number:'1.2-2' }}</span>
+              <span>\${{ selectedBill.tax | number:'1.2-2' }}</span>
             </div>
             <div *ngIf="selectedBill.discount > 0" class="totals-row">
               <span>Discount:</span>
-              <span>-₹{{ selectedBill.discount | number:'1.2-2' }}</span>
+              <span>-\${{ selectedBill.discount | number:'1.2-2' }}</span>
             </div>
             <div class="totals-row total">
-              <strong>Total: ₹{{ selectedBill.total | number:'1.2-2' }}</strong>
+              <strong>Total: \${{ selectedBill.total | number:'1.2-2' }}</strong>
             </div>
           </div>
           
@@ -473,7 +473,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
             <label>Amount (\$) *</label>
             <input type="number" formControlName="amount" class="form-input" 
                    [max]="selectedBill?.total || 0" min="0" step="0.01" />
-            <small *ngIf="selectedBill">Total bill amount: ₹{{ selectedBill.total | number:'1.2-2' }}</small>
+            <small *ngIf="selectedBill">Total bill amount: \${{ selectedBill.total | number:'1.2-2' }}</small>
           </div>
           
           <div class="form-group">
