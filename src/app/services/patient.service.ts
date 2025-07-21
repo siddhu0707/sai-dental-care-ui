@@ -38,7 +38,7 @@ export class PatientService {
   }
 
   addPatient(patientData: CreatePatientRequest): Observable<Patient> {
-    const newPatient = {
+    const newPatient: any = {
       ...patientData,
       id: this.generateId(),
       registrationDate: new Date().toISOString(),
