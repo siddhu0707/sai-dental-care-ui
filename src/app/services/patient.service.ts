@@ -57,16 +57,10 @@ export class PatientService {
     );
   }
 
-  deletePatient(id: string): boolean {
-    const currentPatients = this.patientsSubject.value;
-    const filteredPatients = currentPatients.filter(patient => patient.id !== id);
-    
-    if (filteredPatients.length !== currentPatients.length) {
-      this.patientsSubject.next(filteredPatients);
-      return true;
-    }
-    
-    return false;
+  deletePatient(id: string): Observable<void> {
+    return this.apiService.deletePatient(id).pipe(
+      tap(() => this.loadPatients())
+    );
   }
 
   searchPatients(query: string): Patient[] {
