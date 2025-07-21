@@ -515,7 +515,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
 export class DashboardComponent implements OnInit {
   totalPatients = 142;
   todayAppointments = 8;
-  monthlyRevenue = 12500;
+  monthlyRevenue = 285000;
   pendingBills = 5;
 
   topDebtors: PatientBalance[] = [];
