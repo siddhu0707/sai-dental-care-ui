@@ -583,8 +583,17 @@ export class DashboardComponent implements OnInit {
       time: '2 hours ago'
     }
   ];
-  
+
+  constructor(private patientBalanceService: PatientBalanceService) {}
+
   ngOnInit() {
-    // Component initialization logic
+    // Load patient balance data
+    this.patientBalanceService.getTopDebtors(5).subscribe(debtors => {
+      this.topDebtors = debtors;
+    });
+
+    this.patientBalanceService.getTotalOutstandingAmount().subscribe(total => {
+      this.totalOutstanding = total;
+    });
   }
 }
