@@ -664,8 +664,8 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
     }
     
     .tab-button.active {
-      color: #f59e0b;
-      border-bottom-color: #f59e0b;
+      color: #0ea5e9;
+      border-bottom-color: #0ea5e9;
     }
     
     .bills-controls {
