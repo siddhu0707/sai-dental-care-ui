@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Patient, CreatePatientRequest } from '../models/patient.model';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
