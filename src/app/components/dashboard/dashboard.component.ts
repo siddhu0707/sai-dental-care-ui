@@ -104,11 +104,11 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
               <div *ngFor="let balance of topDebtors" class="balance-item">
                 <div class="balance-patient">
                   <h4 class="patient-name">{{ balance.patientName }}</h4>
-                  <p class="balance-details">Total Billed: ₹{{ balance.totalBilled | number:'1.2-2' }}</p>
-                  <p class="balance-details">Paid: ₹{{ balance.totalPaid | number:'1.2-2' }}</p>
+                  <p class="balance-details">Total Billed: \${{ balance.totalBilled | number:'1.2-2' }}</p>
+                  <p class="balance-details">Paid: \${{ balance.totalPaid | number:'1.2-2' }}</p>
                 </div>
                 <div class="balance-amount outstanding">
-                  ₹{{ balance.remainingBalance | number:'1.2-2' }}
+                  \${{ balance.remainingBalance | number:'1.2-2' }}
                 </div>
               </div>
 
@@ -579,7 +579,7 @@ export class DashboardComponent implements OnInit {
       type: 'success',
       icon: '✅',
       title: 'Payment Received',
-      message: 'John Doe paid $250 for cleaning',
+      message: 'John Doe paid ₹4500 for cleaning',
       time: '2 hours ago'
     }
   ];
