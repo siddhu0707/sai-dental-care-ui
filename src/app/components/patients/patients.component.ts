@@ -922,21 +922,23 @@ export class PatientsComponent implements OnInit {
   onSubmit() {
     if (this.patientForm.valid) {
       const formData = this.patientForm.value;
-      
+
       const patientData: CreatePatientRequest = {
         ...formData,
         dateOfBirth: new Date(formData.dateOfBirth),
         medicalHistory: formData.medicalHistory ? formData.medicalHistory.split(',').map((item: string) => item.trim()).filter((item: string) => item) : [],
         allergies: formData.allergies ? formData.allergies.split(',').map((item: string) => item.trim()).filter((item: string) => item) : []
       };
-      
+
       if (this.showAddPatientModal) {
-        this.patientService.addPatient(patientData);
+        this.patientService.addPatient(patientData).subscribe(() => {
+          this.closeModal();
+        });
       } else if (this.showEditPatientModal && this.selectedPatient) {
-        this.patientService.updatePatient(this.selectedPatient.id, patientData);
+        this.patientService.updatePatient(this.selectedPatient.id, patientData).subscribe(() => {
+          this.closeModal();
+        });
       }
-      
-      this.closeModal();
     }
   }
   
