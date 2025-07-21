@@ -34,7 +34,7 @@ import { CommonModule } from '@angular/common';
           </li>
           <li>
             <a routerLink="/appointments" routerLinkActive="active" class="nav-item">
-              <span class="nav-icon">📅</span>
+              <span class="nav-icon">����</span>
               <span class="nav-text">Appointments</span>
             </a>
           </li>
@@ -71,25 +71,48 @@ import { CommonModule } from '@angular/common';
     
     .sidebar {
       width: 280px;
-      background: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%);
+      background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%);
       color: white;
       display: flex;
       flex-direction: column;
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     }
-    
+
     .sidebar-header {
-      padding: 2rem 1.5rem;
+      padding: 1.5rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-    
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .clinic-info {
+      flex: 1;
+    }
+
     .clinic-name {
       margin: 0;
       font-size: 1.5rem;
       font-weight: 600;
       color: white;
     }
-    
+
     .clinic-subtitle {
       margin: 0.5rem 0 0 0;
       font-size: 0.9rem;
