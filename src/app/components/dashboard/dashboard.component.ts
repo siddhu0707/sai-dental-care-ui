@@ -458,6 +458,43 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
       color: #6b7280;
     }
     
+    .balance-list {
+      padding: 0 1.5rem 1.5rem 1.5rem;
+    }
+
+    .balance-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .balance-item:last-child {
+      border-bottom: none;
+    }
+
+    .balance-patient h4 {
+      margin: 0 0 0.25rem 0;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .balance-details {
+      margin: 0.125rem 0;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .balance-amount {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .balance-amount.outstanding {
+      color: #dc2626;
+    }
+
     @media (max-width: 1024px) {
       .dashboard-content {
         grid-template-columns: 1fr;
