@@ -35,7 +35,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
         <div class="stat-card revenue">
           <div class="stat-icon">💰</div>
           <div class="stat-content">
-            <h3 class="stat-value">\${{ monthlyRevenue | number }}</h3>
+            <h3 class="stat-value">₹{{ monthlyRevenue | number }}</h3>
             <p class="stat-label">Monthly Revenue</p>
           </div>
         </div>
