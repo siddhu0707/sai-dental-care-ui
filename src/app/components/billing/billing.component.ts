@@ -29,7 +29,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
       
       <div class="billing-stats">
         <div class="stat-card revenue">
-          <div class="stat-icon">��</div>
+          <div class="stat-icon">💰</div>
           <div class="stat-content">
             <h3 class="stat-value">\${{ monthlyRevenue | number:'1.2-2' }}</h3>
             <p class="stat-label">Monthly Revenue</p>
@@ -333,7 +333,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                   </div>
                   
                   <div class="form-group">
-                    <label>Unit Price (\$)</label>
+                    <label>Unit Price (₹)</label>
                     <input type="number" formControlName="unitPrice" class="form-input" min="0" step="0.01" (input)="calculateItemTotal(i)" />
                   </div>
                   
