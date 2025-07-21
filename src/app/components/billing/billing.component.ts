@@ -231,7 +231,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                 </div>
               </div>
 
-              <div *ngIf="patientBalances.filter(b => b.remainingBalance > 0).length === 0" class="empty-state">
+              <div *ngIf="getPatientsWithBalanceCount() === 0" class="empty-state">
                 <div class="empty-icon">💳</div>
                 <h3>All Paid Up!</h3>
                 <p>All patients have cleared their outstanding balances.</p>
