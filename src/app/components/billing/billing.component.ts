@@ -53,7 +53,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
         </div>
         
         <div class="stat-card overdue">
-          <div class="stat-icon">���️</div>
+          <div class="stat-icon">⚠️</div>
           <div class="stat-content">
             <h3 class="stat-value">{{ overdueBills.length }}</h3>
             <p class="stat-label">Overdue Bills</p>
@@ -571,7 +571,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
     }
     
     .create-bill-btn {
-      background: #f59e0b;
+      background: #0ea5e9;
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
@@ -582,9 +582,9 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
       align-items: center;
       transition: background 0.2s ease;
     }
-    
+
     .create-bill-btn:hover {
-      background: #d97706;
+      background: #0284c7;
     }
     
     .btn-icon {
