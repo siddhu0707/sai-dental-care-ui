@@ -189,10 +189,10 @@ import { RouterLink } from '@angular/router';
       justify-content: center;
     }
     
-    .stat-card.patients .stat-icon { background: #dbeafe; }
-    .stat-card.appointments .stat-icon { background: #dcfce7; }
-    .stat-card.revenue .stat-icon { background: #fef3c7; }
-    .stat-card.pending .stat-icon { background: #fed7d7; }
+    .stat-card.patients .stat-icon { background: #e0f2fe; }
+    .stat-card.appointments .stat-icon { background: #cffafe; }
+    .stat-card.revenue .stat-icon { background: #bae6fd; }
+    .stat-card.pending .stat-icon { background: #7dd3fc; }
     
     .stat-value {
       margin: 0;
