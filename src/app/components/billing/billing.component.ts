@@ -1298,6 +1298,7 @@ export class BillingComponent implements OnInit {
   tabs = [
     { key: 'bills', label: 'All Bills' },
     { key: 'payments', label: 'Payments' },
+    { key: 'balances', label: 'Patient Balances' },
     { key: 'templates', label: 'Service Templates' }
   ];
 
