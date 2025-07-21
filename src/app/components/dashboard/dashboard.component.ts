@@ -401,30 +401,30 @@ import { RouterLink } from '@angular/router';
     }
     
     .action-button.primary {
-      background: #3b82f6;
+      background: #0ea5e9;
       color: white;
     }
-    
+
     .action-button.primary:hover {
-      background: #2563eb;
+      background: #0284c7;
     }
-    
+
     .action-button.secondary {
-      background: #10b981;
+      background: #0891b2;
       color: white;
     }
-    
+
     .action-button.secondary:hover {
-      background: #059669;
+      background: #0e7490;
     }
-    
+
     .action-button.tertiary {
-      background: #f59e0b;
+      background: #06b6d4;
       color: white;
     }
-    
+
     .action-button.tertiary:hover {
-      background: #d97706;
+      background: #0891b2;
     }
     
     .empty-state {
