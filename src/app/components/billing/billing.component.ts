@@ -524,7 +524,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
           </div>
           
           <div class="form-group">
-            <label>Default Price (\$) *</label>
+            <label>Default Price (₹) *</label>
             <input type="number" formControlName="defaultPrice" class="form-input" min="0" step="0.01" />
           </div>
           
