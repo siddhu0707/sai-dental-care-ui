@@ -341,7 +341,7 @@ import { Patient, CreatePatientRequest } from '../../models/patient.model';
     }
     
     .add-patient-btn {
-      background: #3b82f6;
+      background: #0ea5e9;
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
@@ -352,9 +352,9 @@ import { Patient, CreatePatientRequest } from '../../models/patient.model';
       align-items: center;
       transition: background 0.2s ease;
     }
-    
+
     .add-patient-btn:hover {
-      background: #2563eb;
+      background: #0284c7;
     }
     
     .btn-icon {
