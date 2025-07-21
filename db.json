@@ -1,0 +1,285 @@
+{
+  "patients": [
+    {
+      "id": "patient_001",
+      "firstName": "Rajesh",
+      "lastName": "Kumar",
+      "email": "rajesh.kumar@email.com",
+      "phone": "+91 98765 43210",
+      "dateOfBirth": "1985-03-15",
+      "address": {
+        "street": "123 MG Road",
+        "city": "Bangalore",
+        "state": "Karnataka",
+        "zipCode": "560001"
+      },
+      "medicalHistory": ["Hypertension", "Diabetes Type 2"],
+      "allergies": ["Penicillin"],
+      "emergencyContact": {
+        "name": "Priya Kumar",
+        "phone": "+91 98765 43211",
+        "relationship": "Spouse"
+      },
+      "registrationDate": "2023-01-15",
+      "lastVisit": "2024-01-10",
+      "totalVisits": 8,
+      "notes": "Regular patient, good dental hygiene"
+    },
+    {
+      "id": "patient_002",
+      "firstName": "Priya",
+      "lastName": "Sharma",
+      "email": "priya.sharma@email.com",
+      "phone": "+91 87654 32109",
+      "dateOfBirth": "1992-07-22",
+      "address": {
+        "street": "456 Brigade Road",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "zipCode": "400001"
+      },
+      "medicalHistory": [],
+      "allergies": ["Latex"],
+      "emergencyContact": {
+        "name": "Vikram Sharma",
+        "phone": "+91 87654 32110",
+        "relationship": "Father"
+      },
+      "registrationDate": "2023-06-20",
+      "lastVisit": "2024-01-05",
+      "totalVisits": 3,
+      "notes": "Nervous about dental procedures"
+    },
+    {
+      "id": "patient_003",
+      "firstName": "Amit",
+      "lastName": "Patel",
+      "email": "amit.patel@email.com",
+      "phone": "+91 76543 21098",
+      "dateOfBirth": "1978-11-08",
+      "address": {
+        "street": "789 FC Road",
+        "city": "Pune",
+        "state": "Maharashtra",
+        "zipCode": "411001"
+      },
+      "medicalHistory": ["Heart Disease"],
+      "allergies": [],
+      "emergencyContact": {
+        "name": "Sunita Patel",
+        "phone": "+91 76543 21099",
+        "relationship": "Wife"
+      },
+      "registrationDate": "2022-09-10",
+      "lastVisit": "2023-12-20",
+      "totalVisits": 12,
+      "notes": "Requires antibiotic premedication"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "appointment_001",
+      "patientId": "patient_001",
+      "patientName": "Rajesh Kumar",
+      "doctorName": "Dr. Sai Prasad",
+      "appointmentDate": "2024-01-21",
+      "startTime": "09:00",
+      "endTime": "09:30",
+      "type": "Routine Cleaning",
+      "status": "confirmed",
+      "duration": 30,
+      "notes": "Regular cleaning appointment",
+      "createdDate": "2024-01-10",
+      "updatedDate": "2024-01-10",
+      "reminder": {
+        "sent": true,
+        "sentDate": "2024-01-21"
+      }
+    },
+    {
+      "id": "appointment_002",
+      "patientId": "patient_002",
+      "patientName": "Priya Sharma",
+      "doctorName": "Dr. Sai Prasad",
+      "appointmentDate": "2024-01-21",
+      "startTime": "10:30",
+      "endTime": "11:30",
+      "type": "Tooth Extraction",
+      "status": "confirmed",
+      "duration": 60,
+      "notes": "Wisdom tooth extraction",
+      "createdDate": "2024-01-08",
+      "updatedDate": "2024-01-08",
+      "reminder": {
+        "sent": false
+      }
+    },
+    {
+      "id": "appointment_003",
+      "patientId": "patient_003",
+      "patientName": "Amit Patel",
+      "doctorName": "Dr. Sai Prasad",
+      "appointmentDate": "2024-01-21",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "type": "Root Canal",
+      "status": "scheduled",
+      "duration": 60,
+      "notes": "Root canal treatment - session 2",
+      "createdDate": "2024-01-15",
+      "updatedDate": "2024-01-15",
+      "reminder": {
+        "sent": false
+      }
+    }
+  ],
+  "bills": [
+    {
+      "id": "bill_001",
+      "patientId": "patient_001",
+      "patientName": "Rajesh Kumar",
+      "appointmentId": "appointment_001",
+      "billNumber": "INV-202401-001",
+      "issueDate": "2024-01-14",
+      "dueDate": "2024-02-13",
+      "items": [
+        {
+          "id": "item_001",
+          "description": "Routine Dental Cleaning",
+          "category": "cleaning",
+          "quantity": 1,
+          "unitPrice": 2000,
+          "total": 2000
+        },
+        {
+          "id": "item_002",
+          "description": "Fluoride Treatment",
+          "category": "cleaning",
+          "quantity": 1,
+          "unitPrice": 500,
+          "total": 500
+        }
+      ],
+      "subtotal": 2500,
+      "tax": 450,
+      "discount": 0,
+      "total": 2950,
+      "status": "paid",
+      "paymentMethod": "credit_card",
+      "paymentDate": "2024-01-21",
+      "notes": "Regular cleaning appointment",
+      "createdDate": "2024-01-14",
+      "updatedDate": "2024-01-21"
+    },
+    {
+      "id": "bill_002",
+      "patientId": "patient_002",
+      "patientName": "Priya Sharma",
+      "appointmentId": "appointment_002",
+      "billNumber": "INV-202401-002",
+      "issueDate": "2024-01-16",
+      "dueDate": "2024-02-15",
+      "items": [
+        {
+          "id": "item_003",
+          "description": "Tooth Extraction",
+          "category": "extraction",
+          "quantity": 1,
+          "unitPrice": 4500,
+          "total": 4500
+        },
+        {
+          "id": "item_004",
+          "description": "Post-extraction Care Kit",
+          "category": "medication",
+          "quantity": 1,
+          "unitPrice": 300,
+          "total": 300
+        }
+      ],
+      "subtotal": 4800,
+      "tax": 864,
+      "discount": 0,
+      "total": 5664,
+      "status": "sent",
+      "notes": "Wisdom tooth extraction",
+      "createdDate": "2024-01-16",
+      "updatedDate": "2024-01-16"
+    },
+    {
+      "id": "bill_003",
+      "patientId": "patient_003",
+      "patientName": "Amit Patel",
+      "appointmentId": "appointment_003",
+      "billNumber": "INV-202401-003",
+      "issueDate": "2023-12-21",
+      "dueDate": "2024-01-20",
+      "items": [
+        {
+          "id": "item_005",
+          "description": "Root Canal Treatment",
+          "category": "root_canal",
+          "quantity": 1,
+          "unitPrice": 12000,
+          "total": 12000
+        }
+      ],
+      "subtotal": 12000,
+      "tax": 2160,
+      "discount": 1000,
+      "total": 13160,
+      "status": "overdue",
+      "notes": "Root canal treatment - session 1",
+      "createdDate": "2023-12-21",
+      "updatedDate": "2023-12-21"
+    }
+  ],
+  "payments": [
+    {
+      "id": "payment_001",
+      "billId": "bill_001",
+      "amount": 2950,
+      "method": "credit_card",
+      "date": "2024-01-21",
+      "reference": "PAY-CC123456",
+      "notes": "Paid in full"
+    }
+  ],
+  "serviceTemplates": [
+    {
+      "id": "template_001",
+      "name": "Routine Cleaning",
+      "category": "cleaning",
+      "defaultPrice": 2000,
+      "description": "Standard dental cleaning and examination"
+    },
+    {
+      "id": "template_002",
+      "name": "Tooth Extraction",
+      "category": "extraction",
+      "defaultPrice": 4500,
+      "description": "Simple tooth extraction procedure"
+    },
+    {
+      "id": "template_003",
+      "name": "Root Canal",
+      "category": "root_canal",
+      "defaultPrice": 12000,
+      "description": "Root canal treatment procedure"
+    },
+    {
+      "id": "template_004",
+      "name": "Dental Filling",
+      "category": "filling",
+      "defaultPrice": 3000,
+      "description": "Composite dental filling"
+    },
+    {
+      "id": "template_005",
+      "name": "Crown Placement",
+      "category": "crown",
+      "defaultPrice": 15000,
+      "description": "Porcelain crown placement"
+    }
+  ]
+}
