@@ -198,7 +198,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                 <div class="header-cell">Actions</div>
               </div>
 
-              <div *ngFor="let balance of patientBalances.filter(b => b.remainingBalance > 0)" class="table-row">
+              <div *ngFor="let balance of getPatientsWithBalance()" class="table-row">
                 <div class="table-cell">
                   <strong>{{ balance.patientName }}</strong>
                 </div>
