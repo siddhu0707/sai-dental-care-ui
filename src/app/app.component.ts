@@ -216,6 +216,15 @@ import { HealthCheckService } from './services/health-check.service';
     }
   `]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'sai-dental-care-ui';
+
+  constructor(private healthCheck: HealthCheckService) {}
+
+  ngOnInit() {
+    // Test API connection on app startup
+    setTimeout(() => {
+      this.healthCheck.testConnection();
+    }, 2000); // Wait 2 seconds for servers to be ready
+  }
 }
