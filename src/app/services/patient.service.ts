@@ -8,10 +8,26 @@ import { ApiService } from './api.service';
   providedIn: 'root'
 })
 export class PatientService {
-  private patientsSubject = new BehaviorSubject<Patient[]>(this.getMockPatients());
+  private patientsSubject = new BehaviorSubject<Patient[]>([]);
   public patients$ = this.patientsSubject.asObservable();
 
-  constructor() {}
+  constructor(private apiService: ApiService) {
+    this.loadPatients();
+  }
+
+  private loadPatients() {
+    this.apiService.getPatients().subscribe(patients => {
+      // Convert date strings to Date objects
+      const processedPatients = patients.map(patient => ({
+        ...patient,
+        dateOfBirth: new Date(patient.dateOfBirth),
+        registrationDate: new Date(patient.registrationDate),
+        lastVisit: patient.lastVisit ? new Date(patient.lastVisit) : undefined,
+        nextAppointment: patient.nextAppointment ? new Date(patient.nextAppointment) : undefined
+      }));
+      this.patientsSubject.next(processedPatients);
+    });
+  }
 
   getPatients(): Observable<Patient[]> {
     return this.patients$;
