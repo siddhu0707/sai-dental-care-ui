@@ -157,7 +157,7 @@ import { Patient } from '../../models/patient.model';
             </div>
             
             <div *ngIf="filteredAppointments.length === 0" class="empty-state">
-              <div class="empty-icon">����</div>
+              <div class="empty-icon">📅</div>
               <h3>No appointments found</h3>
               <p>{{ searchQuery || statusFilter || dateFilter ? 'Try adjusting your filters' : 'Schedule your first appointment' }}</p>
             </div>
@@ -963,13 +963,13 @@ import { Patient } from '../../models/patient.model';
     }
     
     .btn.primary {
-      background: #10b981;
+      background: #0ea5e9;
       color: white;
       border: none;
     }
-    
+
     .btn.primary:hover:not(:disabled) {
-      background: #059669;
+      background: #0284c7;
     }
     
     .btn.primary:disabled {
