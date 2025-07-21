@@ -1154,13 +1154,13 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
     }
     
     .btn.primary {
-      background: #f59e0b;
+      background: #0ea5e9;
       color: white;
       border: none;
     }
-    
+
     .btn.primary:hover:not(:disabled) {
-      background: #d97706;
+      background: #0284c7;
     }
     
     .btn.primary:disabled {
