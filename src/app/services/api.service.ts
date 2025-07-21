@@ -22,7 +22,7 @@ export class ApiService {
     return this.http.get<Patient>(`${this.baseUrl}/patients/${id}`);
   }
 
-  createPatient(patient: Omit<Patient, 'id'>): Observable<Patient> {
+  createPatient(patient: any): Observable<Patient> {
     return this.http.post<Patient>(`${this.baseUrl}/patients`, patient);
   }
 
