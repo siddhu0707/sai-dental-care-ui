@@ -177,7 +177,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
               <div class="summary-card">
                 <h3>Patients with Balance</h3>
                 <div class="summary-count">
-                  {{ patientBalances.filter(b => b.remainingBalance > 0).length }}
+                  {{ getPatientsWithBalanceCount() }}
                 </div>
               </div>
             </div>
