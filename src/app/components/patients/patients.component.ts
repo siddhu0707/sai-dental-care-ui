@@ -900,7 +900,7 @@ export class PatientsComponent implements OnInit {
   
   deletePatient(patientId: string) {
     if (confirm('Are you sure you want to delete this patient? This action cannot be undone.')) {
-      this.patientService.deletePatient(patientId);
+      this.patientService.deletePatient(patientId).subscribe();
     }
   }
   
