@@ -394,7 +394,7 @@ import { Patient } from '../../models/patient.model';
           <div class="form-group">
             <label>Amount (\$) *</label>
             <input type="number" formControlName="amount" class="form-input" 
-                   [max]="selectedBill?.total" min="0" step="0.01" />
+                   [max]="selectedBill?.total || 0" min="0" step="0.01" />
             <small *ngIf="selectedBill">Total bill amount: \${{ selectedBill.total | number:'1.2-2' }}</small>
           </div>
           
