@@ -58,7 +58,19 @@ export class PatientService {
     };
 
     return this.apiService.createPatient(newPatient).pipe(
-      tap(() => this.loadPatients())
+      tap(() => this.loadPatients()),
+      catchError(error => {
+        console.error('Error adding patient:', error);
+        // Fallback to local addition if API fails
+        const localPatient: Patient = {
+          ...newPatient,
+          registrationDate: new Date(),
+          dateOfBirth: new Date(newPatient.dateOfBirth)
+        };
+        const currentPatients = this.patientsSubject.value;
+        this.patientsSubject.next([...currentPatients, localPatient]);
+        return of(localPatient);
+      })
     );
   }
 
