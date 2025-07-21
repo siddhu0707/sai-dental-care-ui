@@ -1367,6 +1367,14 @@ export class BillingComponent implements OnInit {
     this.patientService.getPatients().subscribe(patients => {
       this.patients = patients;
     });
+
+    this.patientBalanceService.patientBalances$.subscribe(balances => {
+      this.patientBalances = balances;
+    });
+
+    this.patientBalanceService.getPatientPaymentSummaries().subscribe(summaries => {
+      this.patientPaymentSummaries = summaries;
+    });
   }
 
   updateStats() {
