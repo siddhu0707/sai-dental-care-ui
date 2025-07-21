@@ -1546,7 +1546,18 @@ export class BillingComponent implements OnInit {
       };
 
       if (this.editingBill) {
-        this.billingService.updateBill(this.editingBill.id, billData);
+        // Convert CreateBillRequest to partial Bill format for update
+        const updateData: Partial<Bill> = {
+          patientId: billData.patientId,
+          items: billData.items.map(item => ({
+            ...item,
+            id: 'item_' + Math.random().toString(36).substr(2, 9),
+            total: item.quantity * item.unitPrice
+          })),
+          discount: billData.discount,
+          notes: billData.notes
+        };
+        this.billingService.updateBill(this.editingBill.id, updateData);
       } else {
         this.billingService.createBill(billData);
       }
