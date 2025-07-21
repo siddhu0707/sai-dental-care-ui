@@ -171,7 +171,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
               <div class="summary-card">
                 <h3>Total Outstanding</h3>
                 <div class="summary-amount outstanding">
-                  \${{ patientBalances.reduce(getOutstandingTotal, 0) | number:'1.2-2' }}
+                  \${{ getTotalOutstandingAmount() | number:'1.2-2' }}
                 </div>
               </div>
               <div class="summary-card">
