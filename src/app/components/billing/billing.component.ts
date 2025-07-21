@@ -1307,6 +1307,8 @@ export class BillingComponent implements OnInit {
   payments: Payment[] = [];
   patients: Patient[] = [];
   serviceTemplates: ServiceTemplate[] = [];
+  patientBalances: PatientBalance[] = [];
+  patientPaymentSummaries: PatientPaymentSummary[] = [];
   
   searchQuery = '';
   statusFilter = '';
