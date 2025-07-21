@@ -1790,7 +1790,7 @@ export class BillingComponent implements OnInit {
 
   createPaymentPlan(balance: PatientBalance) {
     // This would open a payment plan modal
-    alert(`Payment plan feature for ${balance.patientName} would be implemented here. Outstanding: $${balance.remainingBalance.toFixed(2)}`);
+    alert(`Payment plan feature for ${balance.patientName} would be implemented here. Outstanding: ₹${balance.remainingBalance.toFixed(2)}`);
   }
 
   closeModal() {
