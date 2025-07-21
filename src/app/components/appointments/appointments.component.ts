@@ -157,7 +157,7 @@ import { Patient } from '../../models/patient.model';
             </div>
             
             <div *ngIf="filteredAppointments.length === 0" class="empty-state">
-              <div class="empty-icon">📅</div>
+              <div class="empty-icon">����</div>
               <h3>No appointments found</h3>
               <p>{{ searchQuery || statusFilter || dateFilter ? 'Try adjusting your filters' : 'Schedule your first appointment' }}</p>
             </div>
@@ -414,8 +414,8 @@ import { Patient } from '../../models/patient.model';
     }
     
     .tab-button.active {
-      color: #3b82f6;
-      border-bottom-color: #3b82f6;
+      color: #0ea5e9;
+      border-bottom-color: #0ea5e9;
     }
     
     .schedule-grid {
