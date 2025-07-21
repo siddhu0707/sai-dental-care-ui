@@ -16,16 +16,27 @@ export class PatientService {
   }
 
   private loadPatients() {
-    this.apiService.getPatients().subscribe(patients => {
-      // Convert date strings to Date objects
-      const processedPatients = patients.map(patient => ({
-        ...patient,
-        dateOfBirth: new Date(patient.dateOfBirth),
-        registrationDate: new Date(patient.registrationDate),
-        lastVisit: patient.lastVisit ? new Date(patient.lastVisit) : undefined,
-        nextAppointment: patient.nextAppointment ? new Date(patient.nextAppointment) : undefined
-      }));
-      this.patientsSubject.next(processedPatients);
+    this.apiService.getPatients().pipe(
+      catchError(error => {
+        console.error('Error loading patients:', error);
+        // Fallback to mock data if API fails
+        return of(this.getMockPatients());
+      })
+    ).subscribe(patients => {
+      try {
+        // Convert date strings to Date objects
+        const processedPatients = patients.map(patient => ({
+          ...patient,
+          dateOfBirth: new Date(patient.dateOfBirth),
+          registrationDate: new Date(patient.registrationDate),
+          lastVisit: patient.lastVisit ? new Date(patient.lastVisit) : undefined,
+          nextAppointment: patient.nextAppointment ? new Date(patient.nextAppointment) : undefined
+        }));
+        this.patientsSubject.next(processedPatients);
+      } catch (error) {
+        console.error('Error processing patients data:', error);
+        this.patientsSubject.next(this.getMockPatients());
+      }
     });
   }
 
