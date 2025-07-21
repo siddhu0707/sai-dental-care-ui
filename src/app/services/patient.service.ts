@@ -1,0 +1,160 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Patient, CreatePatientRequest } from '../models/patient.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PatientService {
+  private patientsSubject = new BehaviorSubject<Patient[]>(this.getMockPatients());
+  public patients$ = this.patientsSubject.asObservable();
+
+  constructor() {}
+
+  getPatients(): Observable<Patient[]> {
+    return this.patients$;
+  }
+
+  getPatientById(id: string): Patient | undefined {
+    return this.patientsSubject.value.find(patient => patient.id === id);
+  }
+
+  addPatient(patientData: CreatePatientRequest): Patient {
+    const newPatient: Patient = {
+      id: this.generateId(),
+      ...patientData,
+      registrationDate: new Date(),
+      totalVisits: 0,
+      notes: patientData.notes || ''
+    };
+
+    const currentPatients = this.patientsSubject.value;
+    this.patientsSubject.next([...currentPatients, newPatient]);
+    
+    return newPatient;
+  }
+
+  updatePatient(id: string, patientData: Partial<Patient>): Patient | null {
+    const currentPatients = this.patientsSubject.value;
+    const patientIndex = currentPatients.findIndex(patient => patient.id === id);
+    
+    if (patientIndex === -1) {
+      return null;
+    }
+
+    const updatedPatient = { ...currentPatients[patientIndex], ...patientData };
+    const updatedPatients = [...currentPatients];
+    updatedPatients[patientIndex] = updatedPatient;
+    
+    this.patientsSubject.next(updatedPatients);
+    return updatedPatient;
+  }
+
+  deletePatient(id: string): boolean {
+    const currentPatients = this.patientsSubject.value;
+    const filteredPatients = currentPatients.filter(patient => patient.id !== id);
+    
+    if (filteredPatients.length !== currentPatients.length) {
+      this.patientsSubject.next(filteredPatients);
+      return true;
+    }
+    
+    return false;
+  }
+
+  searchPatients(query: string): Patient[] {
+    const allPatients = this.patientsSubject.value;
+    const lowercaseQuery = query.toLowerCase();
+    
+    return allPatients.filter(patient =>
+      patient.firstName.toLowerCase().includes(lowercaseQuery) ||
+      patient.lastName.toLowerCase().includes(lowercaseQuery) ||
+      patient.email.toLowerCase().includes(lowercaseQuery) ||
+      patient.phone.includes(query)
+    );
+  }
+
+  private generateId(): string {
+    return 'patient_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  private getMockPatients(): Patient[] {
+    return [
+      {
+        id: 'patient_001',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john.doe@email.com',
+        phone: '+1 (555) 123-4567',
+        dateOfBirth: new Date('1985-03-15'),
+        address: {
+          street: '123 Main St',
+          city: 'New York',
+          state: 'NY',
+          zipCode: '10001'
+        },
+        medicalHistory: ['Hypertension', 'Diabetes Type 2'],
+        allergies: ['Penicillin'],
+        emergencyContact: {
+          name: 'Jane Doe',
+          phone: '+1 (555) 123-4568',
+          relationship: 'Spouse'
+        },
+        registrationDate: new Date('2023-01-15'),
+        lastVisit: new Date('2024-01-10'),
+        totalVisits: 8,
+        notes: 'Regular patient, good dental hygiene'
+      },
+      {
+        id: 'patient_002',
+        firstName: 'Sarah',
+        lastName: 'Wilson',
+        email: 'sarah.wilson@email.com',
+        phone: '+1 (555) 987-6543',
+        dateOfBirth: new Date('1992-07-22'),
+        address: {
+          street: '456 Oak Ave',
+          city: 'Los Angeles',
+          state: 'CA',
+          zipCode: '90210'
+        },
+        medicalHistory: [],
+        allergies: ['Latex'],
+        emergencyContact: {
+          name: 'Michael Wilson',
+          phone: '+1 (555) 987-6544',
+          relationship: 'Father'
+        },
+        registrationDate: new Date('2023-06-20'),
+        lastVisit: new Date('2024-01-05'),
+        totalVisits: 3,
+        notes: 'Nervous about dental procedures'
+      },
+      {
+        id: 'patient_003',
+        firstName: 'Mike',
+        lastName: 'Johnson',
+        email: 'mike.johnson@email.com',
+        phone: '+1 (555) 456-7890',
+        dateOfBirth: new Date('1978-11-08'),
+        address: {
+          street: '789 Pine Rd',
+          city: 'Chicago',
+          state: 'IL',
+          zipCode: '60601'
+        },
+        medicalHistory: ['Heart Disease'],
+        allergies: [],
+        emergencyContact: {
+          name: 'Lisa Johnson',
+          phone: '+1 (555) 456-7891',
+          relationship: 'Wife'
+        },
+        registrationDate: new Date('2022-09-10'),
+        lastVisit: new Date('2023-12-20'),
+        totalVisits: 12,
+        notes: 'Requires antibiotic premedication'
+      }
+    ];
+  }
+}
