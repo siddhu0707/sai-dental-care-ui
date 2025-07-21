@@ -164,6 +164,82 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
           </div>
         </div>
         
+        <!-- Patient Balances Tab -->
+        <div *ngIf="activeTab === 'balances'" class="tab-content">
+          <div class="balances-summary">
+            <div class="summary-stats">
+              <div class="summary-card">
+                <h3>Total Outstanding</h3>
+                <div class="summary-amount outstanding">
+                  \${{ patientBalances.reduce(getOutstandingTotal, 0) | number:'1.2-2' }}
+                </div>
+              </div>
+              <div class="summary-card">
+                <h3>Patients with Balance</h3>
+                <div class="summary-count">
+                  {{ patientBalances.filter(b => b.remainingBalance > 0).length }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="patient-balances-list">
+            <div class="balances-header">
+              <h3>Patient Outstanding Balances</h3>
+            </div>
+
+            <div class="balances-table">
+              <div class="table-header">
+                <div class="header-cell">Patient</div>
+                <div class="header-cell">Total Billed</div>
+                <div class="header-cell">Total Paid</div>
+                <div class="header-cell">Remaining</div>
+                <div class="header-cell">Last Payment</div>
+                <div class="header-cell">Actions</div>
+              </div>
+
+              <div *ngFor="let balance of patientBalances.filter(b => b.remainingBalance > 0)" class="table-row">
+                <div class="table-cell">
+                  <strong>{{ balance.patientName }}</strong>
+                </div>
+                <div class="table-cell">
+                  \${{ balance.totalBilled | number:'1.2-2' }}
+                </div>
+                <div class="table-cell">
+                  \${{ balance.totalPaid | number:'1.2-2' }}
+                </div>
+                <div class="table-cell">
+                  <span class="balance-amount outstanding">
+                    \${{ balance.remainingBalance | number:'1.2-2' }}
+                  </span>
+                </div>
+                <div class="table-cell">
+                  <span *ngIf="balance.lastPaymentDate; else noPayment">
+                    {{ balance.lastPaymentDate | date:'MMM d, y' }}
+                  </span>
+                  <ng-template #noPayment>
+                    <span class="no-data">No payments</span>
+                  </ng-template>
+                </div>
+                <div class="table-cell">
+                  <button (click)="viewPatientBills(balance.patientId)" class="action-btn view">
+                    View Bills
+                  </button>
+                  <button (click)="createPaymentPlan(balance)" class="action-btn primary">
+                    Payment Plan
+                  </button>
+                </div>
+              </div>
+
+              <div *ngIf="patientBalances.filter(b => b.remainingBalance > 0).length === 0" class="empty-state">
+                <div class="empty-icon">💳</div>
+                <h3>All Paid Up!</h3>
+                <p>All patients have cleared their outstanding balances.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Service Templates Tab -->
         <div *ngIf="activeTab === 'templates'" class="tab-content">
           <div class="templates-header">
