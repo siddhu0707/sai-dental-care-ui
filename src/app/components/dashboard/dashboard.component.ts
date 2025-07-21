@@ -517,6 +517,9 @@ export class DashboardComponent implements OnInit {
   todayAppointments = 8;
   monthlyRevenue = 12500;
   pendingBills = 5;
+
+  topDebtors: PatientBalance[] = [];
+  totalOutstanding = 0;
   
   upcomingAppointments = [
     {
