@@ -10,8 +10,13 @@ import { CommonModule } from '@angular/common';
     <div class="app-container">
       <nav class="sidebar">
         <div class="sidebar-header">
-          <h2 class="clinic-name">Sai Dental Care</h2>
-          <p class="clinic-subtitle">Management System</p>
+          <div class="logo-container">
+            <div class="logo">🦷</div>
+            <div class="clinic-info">
+              <h2 class="clinic-name">Sai Dental Care</h2>
+              <p class="clinic-subtitle">Management System</p>
+            </div>
+          </div>
         </div>
         
         <ul class="nav-menu">
