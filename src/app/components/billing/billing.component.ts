@@ -53,7 +53,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
         </div>
         
         <div class="stat-card overdue">
-          <div class="stat-icon">⚠️</div>
+          <div class="stat-icon">���️</div>
           <div class="stat-content">
             <h3 class="stat-value">{{ overdueBills.length }}</h3>
             <p class="stat-label">Overdue Bills</p>
@@ -1672,6 +1672,29 @@ export class BillingComponent implements OnInit {
     }
   }
 
+  getOutstandingTotal = (total: number, balance: PatientBalance): number => {
+    return total + balance.remainingBalance;
+  }
+
+  viewPatientBills(patientId: string) {
+    this.activeTab = 'bills';
+    // Filter bills for this patient
+    this.searchQuery = '';
+    this.statusFilter = '';
+    setTimeout(() => {
+      const patient = this.patients.find(p => p.id === patientId);
+      if (patient) {
+        this.searchQuery = `${patient.firstName} ${patient.lastName}`;
+        this.filterBills();
+      }
+    }, 100);
+  }
+
+  createPaymentPlan(balance: PatientBalance) {
+    // This would open a payment plan modal
+    alert(`Payment plan feature for ${balance.patientName} would be implemented here. Outstanding: $${balance.remainingBalance.toFixed(2)}`);
+  }
+
   closeModal() {
     this.showCreateBillModal = false;
     this.showEditBillModal = false;
@@ -1680,11 +1703,11 @@ export class BillingComponent implements OnInit {
     this.showTemplateModal = false;
     this.selectedBill = null;
     this.editingBill = null;
-    
+
     this.billForm.reset();
     this.paymentForm.reset();
     this.templateForm.reset();
-    
+
     this.billForm = this.createBillForm();
     this.paymentForm = this.createPaymentForm();
     this.templateForm = this.createTemplateForm();
