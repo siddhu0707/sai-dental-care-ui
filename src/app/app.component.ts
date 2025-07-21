@@ -34,7 +34,7 @@ import { CommonModule } from '@angular/common';
           </li>
           <li>
             <a routerLink="/appointments" routerLinkActive="active" class="nav-item">
-              <span class="nav-icon">����</span>
+              <span class="nav-icon">📅</span>
               <span class="nav-text">Appointments</span>
             </a>
           </li>
@@ -144,7 +144,7 @@ import { CommonModule } from '@angular/common';
     .nav-item.active {
       background: rgba(255, 255, 255, 0.15);
       color: white;
-      border-left-color: #60a5fa;
+      border-left-color: #7dd3fc;
     }
     
     .nav-icon {
