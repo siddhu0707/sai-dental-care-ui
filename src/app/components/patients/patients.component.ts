@@ -418,7 +418,7 @@ import { Patient, CreatePatientRequest } from '../../models/patient.model';
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
       color: white;
       display: flex;
       align-items: center;
