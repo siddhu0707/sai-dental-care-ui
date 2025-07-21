@@ -334,7 +334,7 @@ import { Patient } from '../../models/patient.model';
           <div class="reminder-section">
             <strong>Reminder:</strong>
             <p *ngIf="selectedAppointment.reminder?.sent; else noReminder">
-              ✅ Sent on {{ selectedAppointment.reminder.sentDate | date:'short' }}
+              ✅ Sent on {{ selectedAppointment.reminder?.sentDate | date:'short' }}
             </p>
             <ng-template #noReminder>
               <p>❌ Not sent</p>
