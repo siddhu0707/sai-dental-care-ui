@@ -1295,6 +1295,92 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
       gap: 1rem;
       justify-content: flex-end;
     }
+
+    .balances-summary {
+      margin-bottom: 2rem;
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .summary-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .summary-card h3 {
+      margin: 0 0 1rem 0;
+      color: #374151;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .summary-amount {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .summary-amount.outstanding {
+      color: #dc2626;
+    }
+
+    .summary-count {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0ea5e9;
+    }
+
+    .patient-balances-list {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .balances-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .balances-header h3 {
+      margin: 0;
+      color: #1f2937;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .balances-table .table-header {
+      grid-template-columns: 200px 120px 120px 120px 120px 180px;
+    }
+
+    .balances-table .table-row {
+      grid-template-columns: 200px 120px 120px 120px 120px 180px;
+    }
+
+    .balance-amount.outstanding {
+      color: #dc2626;
+      font-weight: 600;
+    }
+
+    .no-data {
+      color: #9ca3af;
+      font-style: italic;
+    }
+
+    .action-btn.primary {
+      background: #0ea5e9;
+      color: white;
+    }
+
+    .action-btn.primary:hover {
+      background: #0284c7;
+    }
     
     @media (max-width: 1024px) {
       .table-header,
