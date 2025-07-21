@@ -1762,6 +1762,18 @@ export class BillingComponent implements OnInit {
     return total + balance.remainingBalance;
   }
 
+  getPatientsWithBalance(): PatientBalance[] {
+    return this.patientBalances.filter(balance => balance.remainingBalance > 0);
+  }
+
+  getTotalOutstandingAmount(): number {
+    return this.patientBalances.reduce((total, balance) => total + balance.remainingBalance, 0);
+  }
+
+  getPatientsWithBalanceCount(): number {
+    return this.patientBalances.filter(balance => balance.remainingBalance > 0).length;
+  }
+
   viewPatientBills(patientId: string) {
     this.activeTab = 'bills';
     // Filter bills for this patient
