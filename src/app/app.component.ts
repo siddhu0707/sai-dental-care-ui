@@ -1,130 +1,188 @@
 import { Component } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
   template: `
-    <div class="main-container">
-      <header class="header">
-        <h1 class="title">Sai Dental Care</h1>
-        <p class="subtitle">Professional Dental Services</p>
-      </header>
-      
-      <main class="content">
-        <section class="welcome-section">
-          <h2>Welcome to Sai Dental Care</h2>
-          <p>Your trusted partner for comprehensive dental health solutions.</p>
-          
-          <div class="features-grid">
-            <div class="feature-card">
-              <h3>Professional Care</h3>
-              <p>Expert dental professionals providing top-quality treatments.</p>
-            </div>
-            <div class="feature-card">
-              <h3>Modern Equipment</h3>
-              <p>State-of-the-art technology for precise and comfortable procedures.</p>
-            </div>
-            <div class="feature-card">
-              <h3>Patient Comfort</h3>
-              <p>Comfortable environment designed with patient care in mind.</p>
+    <div class="app-container">
+      <nav class="sidebar">
+        <div class="sidebar-header">
+          <h2 class="clinic-name">Sai Dental Care</h2>
+          <p class="clinic-subtitle">Management System</p>
+        </div>
+        
+        <ul class="nav-menu">
+          <li>
+            <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+              <span class="nav-icon">📊</span>
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/patients" routerLinkActive="active" class="nav-item">
+              <span class="nav-icon">👥</span>
+              <span class="nav-text">Patients</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/appointments" routerLinkActive="active" class="nav-item">
+              <span class="nav-icon">📅</span>
+              <span class="nav-text">Appointments</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/billing" routerLinkActive="active" class="nav-item">
+              <span class="nav-icon">💰</span>
+              <span class="nav-text">Billing</span>
+            </a>
+          </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+          <div class="user-info">
+            <div class="user-avatar">👨‍⚕️</div>
+            <div class="user-details">
+              <p class="user-name">Dr. Smith</p>
+              <p class="user-role">Administrator</p>
             </div>
           </div>
-        </section>
+        </div>
+      </nav>
+      
+      <main class="main-content">
+        <router-outlet></router-outlet>
       </main>
     </div>
   `,
   styles: [`
-    .main-container {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    .app-container {
+      display: flex;
+      height: 100vh;
+      background: #f8fafc;
+    }
+    
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sidebar-header {
+      padding: 2rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .clinic-name {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
       color: white;
     }
     
-    .header {
-      text-align: center;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-    }
-    
-    .title {
-      font-size: 2.5rem;
-      margin: 0;
-      font-weight: 300;
-    }
-    
-    .subtitle {
-      font-size: 1.2rem;
+    .clinic-subtitle {
       margin: 0.5rem 0 0 0;
-      opacity: 0.9;
+      font-size: 0.9rem;
+      opacity: 0.8;
     }
     
-    .content {
-      padding: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
+    .nav-menu {
+      flex: 1;
+      list-style: none;
+      padding: 1rem 0;
+      margin: 0;
     }
     
-    .welcome-section h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      text-align: center;
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
     }
     
-    .welcome-section > p {
-      text-align: center;
-      font-size: 1.1rem;
-      margin-bottom: 3rem;
-      opacity: 0.9;
-    }
-    
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-    
-    .feature-card {
+    .nav-item:hover {
       background: rgba(255, 255, 255, 0.1);
-      padding: 2rem;
-      border-radius: 10px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: transform 0.3s ease;
+      color: white;
     }
     
-    .feature-card:hover {
-      transform: translateY(-5px);
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border-left-color: #60a5fa;
     }
     
-    .feature-card h3 {
-      margin-top: 0;
-      font-size: 1.3rem;
-      margin-bottom: 1rem;
+    .nav-icon {
+      font-size: 1.2rem;
+      margin-right: 0.75rem;
     }
     
-    .feature-card p {
-      opacity: 0.9;
-      line-height: 1.6;
+    .nav-text {
+      font-weight: 500;
+    }
+    
+    .sidebar-footer {
+      padding: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-right: 0.75rem;
+    }
+    
+    .user-name {
+      margin: 0;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    
+    .user-role {
+      margin: 0.25rem 0 0 0;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+    
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      background: #f8fafc;
     }
     
     @media (max-width: 768px) {
-      .title {
-        font-size: 2rem;
+      .sidebar {
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
       }
       
-      .content {
-        padding: 1rem;
+      .sidebar.mobile-open {
+        transform: translateX(0);
       }
       
-      .features-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-      
-      .feature-card {
-        padding: 1.5rem;
+      .main-content {
+        margin-left: 0;
       }
     }
   `]
