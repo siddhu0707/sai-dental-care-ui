@@ -1337,6 +1337,7 @@ export class BillingComponent implements OnInit {
   constructor(
     private billingService: BillingService,
     private patientService: PatientService,
+    private patientBalanceService: PatientBalanceService,
     private fb: FormBuilder
   ) {
     this.billForm = this.createBillForm();
