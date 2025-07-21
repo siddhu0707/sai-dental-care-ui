@@ -470,7 +470,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
         
         <form [formGroup]="paymentForm" (ngSubmit)="onSubmitPayment()" class="payment-form">
           <div class="form-group">
-            <label>Amount (\$) *</label>
+            <label>Amount (₹) *</label>
             <input type="number" formControlName="amount" class="form-input" 
                    [max]="selectedBill?.total || 0" min="0" step="0.01" />
             <small *ngIf="selectedBill">Total bill amount: \${{ selectedBill.total | number:'1.2-2' }}</small>
