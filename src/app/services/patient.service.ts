@@ -51,20 +51,10 @@ export class PatientService {
     );
   }
 
-  updatePatient(id: string, patientData: Partial<Patient>): Patient | null {
-    const currentPatients = this.patientsSubject.value;
-    const patientIndex = currentPatients.findIndex(patient => patient.id === id);
-    
-    if (patientIndex === -1) {
-      return null;
-    }
-
-    const updatedPatient = { ...currentPatients[patientIndex], ...patientData };
-    const updatedPatients = [...currentPatients];
-    updatedPatients[patientIndex] = updatedPatient;
-    
-    this.patientsSubject.next(updatedPatients);
-    return updatedPatient;
+  updatePatient(id: string, patientData: Partial<Patient>): Observable<Patient> {
+    return this.apiService.updatePatient(id, patientData).pipe(
+      tap(() => this.loadPatients())
+    );
   }
 
   deletePatient(id: string): boolean {
