@@ -97,6 +97,29 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
         <div class="content-right">
           <div class="widget">
             <div class="widget-header">
+              <h3 class="widget-title">Outstanding Balances</h3>
+              <a routerLink="/billing" class="view-all-link">View All</a>
+            </div>
+            <div class="balance-list">
+              <div *ngFor="let balance of topDebtors" class="balance-item">
+                <div class="balance-patient">
+                  <h4 class="patient-name">{{ balance.patientName }}</h4>
+                  <p class="balance-details">Total Billed: \${{ balance.totalBilled | number:'1.2-2' }}</p>
+                  <p class="balance-details">Paid: \${{ balance.totalPaid | number:'1.2-2' }}</p>
+                </div>
+                <div class="balance-amount outstanding">
+                  \${{ balance.remainingBalance | number:'1.2-2' }}
+                </div>
+              </div>
+
+              <div *ngIf="topDebtors.length === 0" class="empty-state">
+                <p>All patients have paid their bills! 🎉</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="widget">
+            <div class="widget-header">
               <h3 class="widget-title">Alerts & Notifications</h3>
             </div>
             <div class="alerts-list">
