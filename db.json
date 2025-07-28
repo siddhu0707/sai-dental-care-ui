@@ -80,6 +80,30 @@
       "notes": "",
       "registrationDate": "2025-07-28T17:45:25.383Z",
       "totalVisits": 0
+    },
+    {
+      "id": "patient_pazu89w8d",
+      "firstName": "Datta",
+      "lastName": "Bangar",
+      "email": "sid@gmail.com",
+      "phone": "08888291710",
+      "dateOfBirth": "1996-01-02T00:00:00.000Z",
+      "address": {
+        "street": "shop no 1 , Swastik cushion",
+        "city": "BARSHI",
+        "state": "MAHARASHTRA",
+        "zipCode": "413401"
+      },
+      "emergencyContact": {
+        "name": "",
+        "phone": "",
+        "relationship": ""
+      },
+      "medicalHistory": [],
+      "allergies": [],
+      "notes": "",
+      "registrationDate": "2025-07-28T20:24:06.727Z",
+      "totalVisits": 0
     }
   ],
   "appointments": [
@@ -208,6 +232,24 @@
       "status": "scheduled",
       "createdDate": "2025-07-28T19:24:26.347Z",
       "updatedDate": "2025-07-28T19:24:26.347Z",
+      "reminder": {
+        "sent": false
+      }
+    },
+    {
+      "id": "7b38",
+      "patientId": "patient_pazu89w8d",
+      "appointmentDate": "2025-07-30T00:00:00.000Z",
+      "startTime": "20:30",
+      "type": "Orthodontic Treatment",
+      "duration": 30,
+      "doctorName": "Dr. Smith",
+      "notes": "",
+      "patientName": "Unknown Patient",
+      "endTime": "21:00",
+      "status": "scheduled",
+      "createdDate": "2025-07-28T20:40:07.389Z",
+      "updatedDate": "2025-07-28T20:40:07.389Z",
       "reminder": {
         "sent": false
       }

@@ -159,13 +159,7 @@ import { TranslationService } from '../../services/translation.service';
                             {{ appointment.reminder?.sent ? ('appointments.reminderSent' | translate) : ('appointments.noReminder' | translate) }}
                           </span>
                         </label>
-                      </div>
-                      <p class="appointment-type">{{ appointment.type }}</p>
-                      <p class="appointment-duration">{{ appointment.duration }} minutes</p>
-                      <div class="appointment-status" [class]="appointment.status">
-                        {{ appointment.status | titlecase }}
-                      </div>
-                      <div class="appointment-actions">
+                          <div class="appointment-actions">
                         <button (click)="viewAppointment(appointment)" class="action-btn small">{{ 'common.view' | translate }}</button>
                         <button (click)="editAppointment(appointment)" class="action-btn small">{{ 'common.edit' | translate }}</button>
                         <button *ngIf="appointment.status === 'scheduled'"
@@ -175,6 +169,16 @@ import { TranslationService } from '../../services/translation.service';
                                 (click)="markCompleted(appointment.id)"
                                 class="action-btn small complete">{{ 'appointments.complete' | translate }}</button>
                       </div>
+                                              <div class="appointment-status" [class]="appointment.status">
+                        {{ appointment.status | titlecase }}
+
+                      </div>
+                      </div>
+                      <div class="type-duration">
+                      <p class="appointment-type">{{ appointment.type }}</p>
+                      <p class="appointment-duration">{{ appointment.duration }} minutes</p>
+                    </div>
+
                     </div>
                   </ng-container>
                 </div>
