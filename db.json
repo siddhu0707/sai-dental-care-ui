@@ -58,31 +58,28 @@
       "notes": "Nervous about dental procedures"
     },
     {
-      "id": "patient_003",
-      "firstName": "Amit",
-      "lastName": "Patel",
-      "email": "amit.patel@email.com",
-      "phone": "+91 76543 21098",
-      "dateOfBirth": "1978-11-08",
+      "id": "patient_1a2gx4kq1",
+      "firstName": "Shinde",
+      "lastName": "pawar",
+      "email": "sid@gmail.com",
+      "phone": "7575758956",
+      "dateOfBirth": "2025-07-09T00:00:00.000Z",
       "address": {
-        "street": "789 FC Road",
-        "city": "Pune",
-        "state": "Maharashtra",
-        "zipCode": "411001"
+        "street": "shop no 1 , Swastik cushion",
+        "city": "BARSHI",
+        "state": "MAHARASHTRA",
+        "zipCode": "413401"
       },
-      "medicalHistory": [
-        "Heart Disease"
-      ],
-      "allergies": [],
       "emergencyContact": {
-        "name": "Sunita Patel",
-        "phone": "+91 76543 21099",
-        "relationship": "Wife"
+        "name": "Datta Bangar",
+        "phone": "08888291710",
+        "relationship": "Parent"
       },
-      "registrationDate": "2022-09-10",
-      "lastVisit": "2023-12-20",
-      "totalVisits": 12,
-      "notes": "Requires antibiotic premedication"
+      "medicalHistory": [],
+      "allergies": [],
+      "notes": "",
+      "registrationDate": "2025-07-28T17:45:25.383Z",
+      "totalVisits": 0
     }
   ],
   "appointments": [
@@ -109,23 +106,24 @@
       "id": "appointment_002",
       "patientId": "patient_002",
       "patientName": "Priya Sharma",
-      "doctorName": "Dr. Sai Prasad",
-      "appointmentDate": "2024-01-21",
+      "doctorName": "Dr. Smith",
+      "appointmentDate": "2024-01-21T00:00:00.000Z",
       "startTime": "10:30",
       "endTime": "11:30",
       "type": "Tooth Extraction",
-      "status": "confirmed",
+      "status": "cancelled",
       "duration": 60,
       "notes": "Wisdom tooth extraction",
       "createdDate": "2024-01-08",
       "updatedDate": "2024-01-08",
       "reminder": {
-        "sent": false
+        "sent": true,
+        "sentDate": "2025-07-28T17:47:11.696Z"
       }
     },
     {
       "id": "appointment_003",
-      "patientId": "patient_003",
+      "patientId": null,
       "patientName": "Amit Patel",
       "doctorName": "Dr. Sai Prasad",
       "appointmentDate": "2024-01-21",
@@ -155,6 +153,61 @@
       "status": "scheduled",
       "createdDate": "2025-07-28T17:07:17.723Z",
       "updatedDate": "2025-07-28T17:07:17.723Z",
+      "reminder": {
+        "sent": false
+      }
+    },
+    {
+      "id": "4b99",
+      "patientId": "patient_002",
+      "appointmentDate": "2025-07-30T00:00:00.000Z",
+      "startTime": "15:30",
+      "type": "Routine Cleaning",
+      "duration": 30,
+      "doctorName": "Dr. Smith",
+      "notes": "",
+      "patientName": "Sarah Wilson",
+      "endTime": "16:00",
+      "status": "scheduled",
+      "createdDate": "2025-07-28T18:32:39.274Z",
+      "updatedDate": "2025-07-28T18:32:39.274Z",
+      "reminder": {
+        "sent": false
+      }
+    },
+    {
+      "id": "9f88",
+      "patientId": "patient_001",
+      "appointmentDate": "2025-07-29T00:00:00.000Z",
+      "startTime": "16:00",
+      "type": "Tooth Extraction",
+      "duration": "60",
+      "doctorName": "Dr. Johnson",
+      "notes": "",
+      "patientName": "John Doe",
+      "endTime": "17:00",
+      "status": "confirmed",
+      "createdDate": "2025-07-28T18:33:22.777Z",
+      "updatedDate": "2025-07-28T18:33:22.777Z",
+      "reminder": {
+        "sent": true,
+        "sentDate": "2025-07-28T18:34:42.740Z"
+      }
+    },
+    {
+      "id": "11be",
+      "patientId": "patient_001",
+      "appointmentDate": "2025-07-29T00:00:00.000Z",
+      "startTime": "16:30",
+      "type": "Consultation",
+      "duration": 30,
+      "doctorName": "Dr. Smith",
+      "notes": "",
+      "patientName": "John Doe",
+      "endTime": "17:00",
+      "status": "scheduled",
+      "createdDate": "2025-07-28T19:24:26.347Z",
+      "updatedDate": "2025-07-28T19:24:26.347Z",
       "reminder": {
         "sent": false
       }
@@ -235,7 +288,7 @@
     },
     {
       "id": "bill_003",
-      "patientId": "patient_003",
+      "patientId": null,
       "patientName": "Amit Patel",
       "appointmentId": "appointment_003",
       "billNumber": "INV-202401-003",
@@ -255,10 +308,12 @@
       "tax": 2160,
       "discount": 1000,
       "total": 13160,
-      "status": "overdue",
+      "status": "paid",
       "notes": "Root canal treatment - session 1",
       "createdDate": "2023-12-21",
-      "updatedDate": "2023-12-21"
+      "updatedDate": "2023-12-21",
+      "paymentMethod": "cash",
+      "paymentDate": "2025-07-28T18:13:02.372Z"
     }
   ],
   "payments": [
@@ -270,6 +325,15 @@
       "date": "2024-01-21",
       "reference": "PAY-CC123456",
       "notes": "Paid in full"
+    },
+    {
+      "id": "f396",
+      "billId": "bill_003",
+      "amount": 13160,
+      "method": "cash",
+      "date": "2025-07-28T18:13:02.362Z",
+      "reference": "PAY-NC05Q6BAD",
+      "notes": ""
     }
   ],
   "serviceTemplates": [

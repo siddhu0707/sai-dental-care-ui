@@ -10,6 +10,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'app-billing',
@@ -415,15 +416,56 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
         <div *ngIf="selectedBill" class="bill-details">
           <div class="bill-header">
             <div class="clinic-info">
-              <h3>Sai Dental Care</h3>
-              <p>123 Main Street<br>City, State 12345<br>Phone: (555) 123-4567</p>
+              <div class="clinic-logo">
+                <div class="logo-icon">🦷</div>
+                <div class="clinic-details">
+                  <h3 class="clinic-name">{{ 'clinic.name' | translate }}</h3>
+                  <p class="clinic-tagline">{{ 'clinic.tagline' | translate }}</p>
+                </div>
+              </div>
+
+              <div class="contact-grid">
+                <div class="contact-item address">
+                  <div class="contact-icon">📍</div>
+                  <div class="contact-details">
+                    <span class="contact-label">{{ 'common.address' | translate }}</span>
+                    <span class="contact-value">{{ 'clinic.address' | translate }}</span>
+                  </div>
+                </div>
+
+                <div class="contact-item phone">
+                  <div class="contact-icon">📞</div>
+                  <div class="contact-details">
+                    <span class="contact-label">{{ 'common.phone' | translate }}</span>
+                    <a href="tel:{{ 'clinic.phone' | translate }}" class="contact-value clickable">{{ 'clinic.phone' | translate }}</a>
+                  </div>
+                </div>
+
+                <div class="contact-item email">
+                  <div class="contact-icon">✉️</div>
+                  <div class="contact-details">
+                    <span class="contact-label">{{ 'common.email' | translate }}</span>
+                    <a href="mailto:{{ 'clinic.email' | translate }}" class="contact-value clickable">{{ 'clinic.email' | translate }}</a>
+                  </div>
+                </div>
+
+                <div class="contact-item doctor">
+                  <div class="contact-icon">👨‍⚕️</div>
+                  <div class="contact-details">
+                    <span class="contact-label">{{ 'appointments.doctor' | translate }}</span>
+                    <span class="contact-value">{{ 'clinic.doctor' | translate }}</span>
+                    <span class="reg-number">{{ 'clinic.regNoLabel' | translate }}: {{ 'clinic.regNo' | translate }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
+
             <div class="bill-info">
               <h2>{{ selectedBill.billNumber }}</h2>
-              <p><strong>Issue Date:</strong> {{ selectedBill.issueDate | date:'fullDate' }}</p>
-              <p><strong>Due Date:</strong> {{ selectedBill.dueDate | date:'fullDate' }}</p>
+              <p><strong>{{ 'billing.issueDate' | translate }}:</strong> {{ selectedBill.issueDate | date:'fullDate' }}</p>
+              <p><strong>{{ 'billing.dueDate' | translate }}:</strong> {{ selectedBill.dueDate | date:'fullDate' }}</p>
               <div class="status-badge large" [class]="selectedBill.status">
-                {{ selectedBill.status | titlecase }}
+                {{ getBillStatusTranslation(selectedBill.status) }}
               </div>
             </div>
           </div>
@@ -704,7 +746,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     }
     
     .search-input {
-      width: 100%;
+      width: 93%;
       padding: 0.75rem 1rem 0.75rem 2.5rem;
       border: 1px solid #d1d5db;
       border-radius: 8px;
@@ -1213,15 +1255,120 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
       border-bottom: 1px solid #e5e7eb;
     }
     
-    .clinic-info h3 {
-      margin: 0 0 0.5rem 0;
-      color: #1f2937;
+    .clinic-logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+      border-radius: 12px;
+      color: white;
     }
-    
-    .clinic-info p {
+
+    .logo-icon {
+      font-size: 2.5rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .clinic-name {
       margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .clinic-tagline {
+      margin: 0.25rem 0 0 0;
+      font-size: 0.9rem;
+      opacity: 0.9;
+      font-style: italic;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border-left: 4px solid #e5e7eb;
+      transition: all 0.2s ease;
+    }
+
+    .contact-item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-left-color: #0ea5e9;
+    }
+
+    .contact-item.address {
+      border-left-color: #f59e0b;
+    }
+
+    .contact-item.phone {
+      border-left-color: #10b981;
+    }
+
+    .contact-item.email {
+      border-left-color: #3b82f6;
+    }
+
+    .contact-item.doctor {
+      border-left-color: #8b5cf6;
+    }
+
+    .contact-icon {
+      font-size: 1.2rem;
+      padding: 0.5rem;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .contact-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex: 1;
+    }
+
+    .contact-label {
+      font-size: 0.75rem;
+      font-weight: 600;
       color: #6b7280;
-      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .contact-value {
+      font-size: 0.9rem;
+      color: #1f2937;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .contact-value.clickable {
+      color: #0ea5e9;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .contact-value.clickable:hover {
+      color: #0284c7;
+      text-decoration: underline;
+    }
+
+    .reg-number {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: 0.25rem;
     }
     
     .bill-info {
@@ -1494,28 +1641,28 @@ export class BillingComponent implements OnInit {
   serviceTemplates: ServiceTemplate[] = [];
   patientBalances: PatientBalance[] = [];
   patientPaymentSummaries: PatientPaymentSummary[] = [];
-  
+
   searchQuery = '';
   statusFilter = '';
-  
+
   monthlyRevenue = 0;
   outstandingAmount = 0;
   pendingBills: Bill[] = [];
   overdueBills: Bill[] = [];
-  
+
   showCreateBillModal = false;
   showEditBillModal = false;
   showViewBillModal = false;
   showPaymentModal = false;
   showTemplateModal = false;
-  
+
   selectedBill: Bill | null = null;
   editingBill: Bill | null = null;
-  
+
   billForm: FormGroup;
   paymentForm: FormGroup;
   templateForm: FormGroup;
-  
+
   serviceCategories = Object.values(ServiceCategory);
   paymentMethods = Object.values(PaymentMethod);
 
@@ -1523,7 +1670,8 @@ export class BillingComponent implements OnInit {
     private billingService: BillingService,
     private patientService: PatientService,
     private patientBalanceService: PatientBalanceService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private translationService: TranslationService
   ) {
     this.billForm = this.createBillForm();
     this.paymentForm = this.createPaymentForm();
@@ -1617,7 +1765,7 @@ export class BillingComponent implements OnInit {
   onServiceSelect(index: number) {
     const serviceName = this.billItems.at(index).get('description')?.value;
     const template = this.serviceTemplates.find(t => t.name === serviceName);
-    
+
     if (template) {
       this.billItems.at(index).patchValue({
         category: template.category,
@@ -1712,7 +1860,18 @@ export class BillingComponent implements OnInit {
   }
 
   sendBill(billId: string) {
-    this.billingService.sendBill(billId);
+    this.billingService.sendBill(billId).subscribe({
+      next: (success) => {
+        if (success) {
+          console.log('Bill sent successfully');
+        } else {
+          console.error('Failed to send bill');
+        }
+      },
+      error: (error) => {
+        console.error('Error sending bill:', error);
+      }
+    });
   }
 
   markAsPaid(bill: Bill) {
@@ -1726,23 +1885,75 @@ export class BillingComponent implements OnInit {
   downloadBill(bill: Bill) {
     const pdf = new jsPDF();
 
-    // Set up the PDF document
-    pdf.setFontSize(20);
-    pdf.text('Sai Dental Care', 20, 30);
+    // Header Background
+    pdf.setFillColor(14, 165, 233); // Blue background
+    pdf.rect(0, 0, 210, 45, 'F');
 
+    // Clinic Logo Area
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(24);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('🦷 Sai Dental Care', 20, 25);
+
+    // Tagline
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'italic');
+    pdf.text(this.translationService.translate('clinic.tagline'), 20, 35);
+
+    // Reset colors for content
+    pdf.setTextColor(0, 0, 0);
+
+    // Clinic Information Box
+    pdf.setFillColor(248, 250, 252); // Light gray background
+    pdf.rect(15, 55, 90, 45, 'F');
+    pdf.setDrawColor(229, 231, 235);
+    pdf.rect(15, 55, 90, 45, 'S');
+
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Dr. Snahe Funde BDS (MUHS)', 20, 65);
+
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Reg. No: A-50911', 20, 72);
+
+    // Contact Information with Icons
+    pdf.setFontSize(9);
+    pdf.text('📍 Chattrapati Shivaji Maharaj Chowk,', 20, 80);
+    pdf.text('   Nere-Dattawadi, Mulashi, Pune - 411057', 20, 85);
+    pdf.text('📞 +91 98765 43210', 20, 92);
+    pdf.text('✉️ info@saidentalcare.com', 20, 97);
+
+    // Invoice Information Box
+    pdf.setFillColor(254, 243, 199); // Light yellow background
+    pdf.rect(110, 55, 85, 45, 'F');
+    pdf.setDrawColor(245, 158, 11);
+    pdf.rect(110, 55, 85, 45, 'S');
+
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(180, 83, 9);
+    pdf.text('INVOICE', 115, 68);
+
+    pdf.setTextColor(0, 0, 0);
     pdf.setFontSize(12);
-    pdf.text('123 Main Street', 20, 40);
-    pdf.text('City, State 12345', 20, 50);
-    pdf.text('Phone: (555) 123-4567', 20, 60);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(bill.billNumber, 115, 78);
 
-    // Bill header
-    pdf.setFontSize(16);
-    pdf.text(`Invoice: ${bill.billNumber}`, 120, 30);
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`Issue Date: ${bill.issueDate.toLocaleDateString()}`, 115, 85);
+    pdf.text(`Due Date: ${bill.dueDate.toLocaleDateString()}`, 115, 92);
 
-    pdf.setFontSize(12);
-    pdf.text(`Issue Date: ${bill.issueDate.toLocaleDateString()}`, 120, 40);
-    pdf.text(`Due Date: ${bill.dueDate.toLocaleDateString()}`, 120, 50);
-    pdf.text(`Status: ${bill.status.toUpperCase()}`, 120, 60);
+    // Status Badge
+    const statusText = this.getBillStatusTranslation(bill.status);
+    const statusColor = this.getStatusColor(bill.status);
+    pdf.setFillColor(statusColor.bg.r, statusColor.bg.g, statusColor.bg.b);
+    pdf.setTextColor(statusColor.text.r, statusColor.text.g, statusColor.text.b);
+    pdf.rect(115, 95, 30, 8, 'F');
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(statusText.toUpperCase(), 117, 100);
 
     // Patient information
     pdf.setFontSize(14);
@@ -1815,7 +2026,7 @@ export class BillingComponent implements OnInit {
   onSubmitBill() {
     if (this.billForm.valid && this.billItems.length > 0) {
       const formData = this.billForm.value;
-      
+
       const billData: CreateBillRequest = {
         patientId: formData.patientId,
         items: formData.items,
@@ -1835,28 +2046,60 @@ export class BillingComponent implements OnInit {
           discount: billData.discount,
           notes: billData.notes
         };
-        this.billingService.updateBill(this.editingBill.id, updateData);
+        this.billingService.updateBill(this.editingBill.id, updateData).subscribe({
+          next: (updatedBill) => {
+            console.log('Bill updated successfully');
+            this.closeModal();
+          },
+          error: (error) => {
+            console.error('Error updating bill:', error);
+          }
+        });
       } else {
-        this.billingService.createBill(billData);
+        this.billingService.createBill(billData).subscribe({
+          next: (newBill) => {
+            console.log('Bill created successfully');
+            this.closeModal();
+          },
+          error: (error) => {
+            console.error('Error creating bill:', error);
+          }
+        });
       }
-
-      this.closeModal();
     }
   }
 
   onSubmitPayment() {
     if (this.paymentForm.valid && this.selectedBill) {
       const formData = this.paymentForm.value;
-      this.billingService.markAsPaid(this.selectedBill.id, formData.method, formData.amount);
-      this.closeModal();
+      this.billingService.markAsPaid(this.selectedBill.id, formData.method, formData.amount).subscribe({
+        next: (success) => {
+          if (success) {
+            console.log('Payment recorded successfully');
+            this.closeModal();
+          } else {
+            console.error('Failed to record payment');
+          }
+        },
+        error: (error) => {
+          console.error('Error recording payment:', error);
+        }
+      });
     }
   }
 
   onSubmitTemplate() {
     if (this.templateForm.valid) {
       const formData = this.templateForm.value;
-      this.billingService.addServiceTemplate(formData);
-      this.closeModal();
+      this.billingService.addServiceTemplate(formData).subscribe({
+        next: (template) => {
+          console.log('Service template added successfully');
+          this.closeModal();
+        },
+        error: (error) => {
+          console.error('Error adding service template:', error);
+        }
+      });
     }
   }
 
@@ -1911,5 +2154,31 @@ export class BillingComponent implements OnInit {
     this.billForm = this.createBillForm();
     this.paymentForm = this.createPaymentForm();
     this.templateForm = this.createTemplateForm();
+  }
+
+  getBillStatusTranslation(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'draft': 'billing.status.draft',
+      'sent': 'billing.status.sent',
+      'paid': 'billing.status.paid',
+      'overdue': 'billing.status.overdue',
+      'cancelled': 'billing.status.cancelled',
+      'partial': 'billing.status.partial'
+    };
+
+    const translationKey = statusMap[status] || status;
+    return this.translationService.translate(translationKey);
+  }
+
+  getStatusColor(status: string): { bg: { r: number, g: number, b: number }, text: { r: number, g: number, b: number } } {
+    const colors: { [key: string]: any } = {
+      'draft': { bg: { r: 243, g: 244, b: 246 }, text: { r: 55, g: 65, b: 81 } },
+      'sent': { bg: { r: 219, g: 234, b: 254 }, text: { r: 37, g: 99, b: 235 } },
+      'paid': { bg: { r: 220, g: 252, b: 231 }, text: { r: 22, g: 163, b: 74 } },
+      'overdue': { bg: { r: 254, g: 226, b: 226 }, text: { r: 220, g: 38, b: 38 } },
+      'cancelled': { bg: { r: 243, g: 244, b: 246 }, text: { r: 107, g: 114, b: 128 } },
+      'partial': { bg: { r: 254, g: 243, b: 199 }, text: { r: 217, g: 119, b: 6 } }
+    };
+    return colors[status] || colors['draft'];
   }
 }

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { tap, catchError, map } from 'rxjs/operators';
 import { Bill, CreateBillRequest, BillStatus, Payment, PaymentMethod, ServiceTemplate, ServiceCategory, BillItem } from '../models/billing.model';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,66 @@ export class BillingService {
 
   private readonly TAX_RATE = 0.08; // 8% tax rate
 
-  constructor() {}
+  constructor(private apiService: ApiService) {
+    this.loadBills();
+    this.loadPayments();
+    this.loadServiceTemplates();
+  }
+
+  private loadBills() {
+    this.apiService.getBills().pipe(
+      catchError(error => {
+        console.error('Error loading bills:', error);
+        return of(this.getMockBills());
+      })
+    ).subscribe(bills => {
+      try {
+        const processedBills = bills.map(bill => ({
+          ...bill,
+          issueDate: new Date(bill.issueDate),
+          dueDate: new Date(bill.dueDate),
+          paymentDate: bill.paymentDate ? new Date(bill.paymentDate) : undefined,
+          createdDate: new Date(bill.createdDate),
+          updatedDate: new Date(bill.updatedDate)
+        }));
+        this.billsSubject.next(processedBills);
+      } catch (error) {
+        console.error('Error processing bills data:', error);
+        this.billsSubject.next(this.getMockBills());
+      }
+    });
+  }
+
+  private loadPayments() {
+    this.apiService.getPayments().pipe(
+      catchError(error => {
+        console.error('Error loading payments:', error);
+        return of(this.getMockPayments());
+      })
+    ).subscribe(payments => {
+      try {
+        const processedPayments = payments.map(payment => ({
+          ...payment,
+          date: new Date(payment.date)
+        }));
+        this.paymentsSubject.next(processedPayments);
+      } catch (error) {
+        console.error('Error processing payments data:', error);
+        this.paymentsSubject.next(this.getMockPayments());
+      }
+    });
+  }
+
+  private loadServiceTemplates() {
+    this.apiService.getServiceTemplates().pipe(
+      catchError(error => {
+        console.error('Error loading service templates:', error);
+        return of(this.getMockServiceTemplates());
+      })
+    ).subscribe(templates => {
+      this.serviceTemplatesSubject.next(templates);
+    });
+  }
 
   getBills(): Observable<Bill[]> {
     return this.bills$;
@@ -45,18 +106,17 @@ export class BillingService {
     );
   }
 
-  createBill(billData: CreateBillRequest): Bill {
+  createBill(billData: CreateBillRequest): Observable<Bill> {
     const subtotal = this.calculateSubtotal(billData.items);
     const tax = subtotal * this.TAX_RATE;
     const total = subtotal + tax - billData.discount;
 
-    const newBill: Bill = {
-      id: this.generateId(),
+    const newBill: any = {
       ...billData,
       patientName: this.getPatientNameById(billData.patientId),
       billNumber: this.generateBillNumber(),
-      issueDate: new Date(),
-      dueDate: this.calculateDueDate(),
+      issueDate: new Date().toISOString(),
+      dueDate: this.calculateDueDate().toISOString(),
       items: billData.items.map(item => ({
         ...item,
         id: this.generateId(),
@@ -66,96 +126,140 @@ export class BillingService {
       tax,
       total,
       status: BillStatus.DRAFT,
-      createdDate: new Date(),
-      updatedDate: new Date()
+      createdDate: new Date().toISOString(),
+      updatedDate: new Date().toISOString()
     };
 
-    const currentBills = this.billsSubject.value;
-    this.billsSubject.next([...currentBills, newBill]);
-    
-    return newBill;
+    return this.apiService.createBill(newBill).pipe(
+      tap(() => this.loadBills()),
+      catchError(error => {
+        console.error('Error creating bill:', error);
+        // Fallback to local creation if API fails
+        const localBill: Bill = {
+          ...newBill,
+          id: this.generateId(),
+          issueDate: new Date(),
+          dueDate: this.calculateDueDate(),
+          paymentDate: undefined,
+          createdDate: new Date(),
+          updatedDate: new Date()
+        };
+        const currentBills = this.billsSubject.value;
+        this.billsSubject.next([...currentBills, localBill]);
+        return of(localBill);
+      })
+    );
   }
 
-  updateBill(id: string, billData: Partial<Bill>): Bill | null {
-    const currentBills = this.billsSubject.value;
-    const billIndex = currentBills.findIndex(bill => bill.id === id);
-    
-    if (billIndex === -1) {
-      return null;
-    }
+  updateBill(id: string, billData: Partial<Bill>): Observable<Bill> {
+    return this.apiService.updateBill(id, billData).pipe(
+      tap(() => this.loadBills()),
+      catchError(error => {
+        console.error('Error updating bill:', error);
+        // Fallback to local update if API fails
+        const currentBills = this.billsSubject.value;
+        const billIndex = currentBills.findIndex(bill => bill.id === id);
 
-    const updatedBill = { 
-      ...currentBills[billIndex], 
-      ...billData,
-      updatedDate: new Date()
-    };
-    
-    // Recalculate totals if items changed
-    if (billData.items) {
-      updatedBill.subtotal = this.calculateSubtotal(billData.items);
-      updatedBill.tax = updatedBill.subtotal * this.TAX_RATE;
-      updatedBill.total = updatedBill.subtotal + updatedBill.tax - (billData.discount || 0);
-    }
-    
-    const updatedBills = [...currentBills];
-    updatedBills[billIndex] = updatedBill;
-    
-    this.billsSubject.next(updatedBills);
-    return updatedBill;
+        if (billIndex === -1) {
+          throw error;
+        }
+
+        const updatedBill = {
+          ...currentBills[billIndex],
+          ...billData,
+          updatedDate: new Date()
+        };
+
+        // Recalculate totals if items changed
+        if (billData.items) {
+          updatedBill.subtotal = this.calculateSubtotal(billData.items);
+          updatedBill.tax = updatedBill.subtotal * this.TAX_RATE;
+          updatedBill.total = updatedBill.subtotal + updatedBill.tax - (billData.discount || 0);
+        }
+
+        const updatedBills = [...currentBills];
+        updatedBills[billIndex] = updatedBill;
+
+        this.billsSubject.next(updatedBills);
+        return of(updatedBill);
+      })
+    );
   }
 
-  deleteBill(id: string): boolean {
-    const currentBills = this.billsSubject.value;
-    const filteredBills = currentBills.filter(bill => bill.id !== id);
-    
-    if (filteredBills.length !== currentBills.length) {
-      this.billsSubject.next(filteredBills);
-      return true;
-    }
-    
-    return false;
+  deleteBill(id: string): Observable<void> {
+    return this.apiService.deleteBill(id).pipe(
+      tap(() => this.loadBills()),
+      catchError(error => {
+        console.error('Error deleting bill:', error);
+        // Fallback to local deletion if API fails
+        const currentBills = this.billsSubject.value;
+        const filteredBills = currentBills.filter(bill => bill.id !== id);
+
+        if (filteredBills.length !== currentBills.length) {
+          this.billsSubject.next(filteredBills);
+        }
+
+        return of(void 0);
+      })
+    );
   }
 
-  sendBill(id: string): boolean {
-    const bill = this.updateBill(id, { status: BillStatus.SENT });
-    return bill !== null;
+  sendBill(id: string): Observable<boolean> {
+    return this.updateBill(id, { status: BillStatus.SENT }).pipe(
+      map(() => true),
+      catchError(() => of(false))
+    );
   }
 
-  markAsPaid(id: string, paymentMethod: PaymentMethod, paymentAmount?: number): boolean {
+  markAsPaid(id: string, paymentMethod: PaymentMethod, paymentAmount?: number): Observable<boolean> {
     const bill = this.getBillById(id);
-    if (!bill) return false;
+    if (!bill) return of(false);
 
     const amountPaid = paymentAmount || bill.total;
     const status = amountPaid >= bill.total ? BillStatus.PAID : BillStatus.PARTIAL;
 
     // Create payment record
-    const payment: Payment = {
-      id: this.generateId(),
+    const payment: any = {
       billId: id,
       amount: amountPaid,
       method: paymentMethod,
-      date: new Date(),
+      date: new Date().toISOString(),
       reference: this.generatePaymentReference(),
       notes: ''
     };
 
-    // Add payment to payments list
-    const currentPayments = this.paymentsSubject.value;
-    this.paymentsSubject.next([...currentPayments, payment]);
-
-    // Update bill status
-    const updatedBill = this.updateBill(id, {
-      status,
-      paymentMethod,
-      paymentDate: new Date()
-    });
-
-    return updatedBill !== null;
+    // Create payment via API
+    return this.apiService.createPayment(payment).pipe(
+      tap(() => this.loadPayments()),
+      catchError(() => {
+        // Fallback to local creation if API fails
+        const localPayment = {
+          ...payment,
+          id: this.generateId(),
+          date: new Date()
+        };
+        const currentPayments = this.paymentsSubject.value;
+        this.paymentsSubject.next([...currentPayments, localPayment]);
+        return of(localPayment);
+      }),
+      tap(() => {
+        // Update bill status
+        this.updateBill(id, {
+          status,
+          paymentMethod,
+          paymentDate: new Date()
+        }).subscribe();
+      }),
+      tap(() => true),
+      catchError(() => of(false))
+    );
   }
 
-  cancelBill(id: string): boolean {
-    const bill = this.updateBill(id, { status: BillStatus.CANCELLED });
-    return bill !== null;
+  cancelBill(id: string): Observable<boolean> {
+    return this.updateBill(id, { status: BillStatus.CANCELLED }).pipe(
+      map(() => true),
+      catchError(() => of(false))
+    );
   }
 
   getPaymentsByBill(billId: string): Payment[] {
@@ -170,16 +274,23 @@ export class BillingService {
     return this.serviceTemplates$;
   }
 
-  addServiceTemplate(template: Omit<ServiceTemplate, 'id'>): ServiceTemplate {
-    const newTemplate: ServiceTemplate = {
-      ...template,
-      id: this.generateId()
-    };
+  addServiceTemplate(template: Omit<ServiceTemplate, 'id'>): Observable<ServiceTemplate> {
+    return this.apiService.createServiceTemplate(template).pipe(
+      tap(() => this.loadServiceTemplates()),
+      catchError(error => {
+        console.error('Error creating service template:', error);
+        // Fallback to local creation if API fails
+        const newTemplate: ServiceTemplate = {
+          ...template,
+          id: this.generateId()
+        };
 
-    const currentTemplates = this.serviceTemplatesSubject.value;
-    this.serviceTemplatesSubject.next([...currentTemplates, newTemplate]);
-    
-    return newTemplate;
+        const currentTemplates = this.serviceTemplatesSubject.value;
+        this.serviceTemplatesSubject.next([...currentTemplates, newTemplate]);
+
+        return of(newTemplate);
+      })
+    );
   }
 
   // Reporting methods

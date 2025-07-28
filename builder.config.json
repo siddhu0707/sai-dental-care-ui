@@ -1,6 +1,6 @@
 {
   "command": "npm run dev",
-  "serverUrl": "http://localhost:4200/dashboard",
+  "serverUrl": "http://localhost:4200",
   "authenticateProxy": false,
   "commitMode": "commits"
 }

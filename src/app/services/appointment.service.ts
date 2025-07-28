@@ -13,7 +13,7 @@ export class AppointmentService {
 
   private workingHours = {
     start: '09:00',
-    end: '17:00',
+    end: '21:00',
     slotDuration: 30 // minutes
   };
 
@@ -52,13 +52,13 @@ export class AppointmentService {
   }
 
   getAppointmentsByDate(date: Date): Appointment[] {
-    return this.appointmentsSubject.value.filter(appointment => 
+    return this.appointmentsSubject.value.filter(appointment =>
       this.isSameDay(appointment.appointmentDate, date)
     );
   }
 
   getAppointmentsByPatient(patientId: string): Appointment[] {
-    return this.appointmentsSubject.value.filter(appointment => 
+    return this.appointmentsSubject.value.filter(appointment =>
       appointment.patientId === patientId
     );
   }
@@ -72,8 +72,8 @@ export class AppointmentService {
     const today = new Date();
     const futureDate = new Date();
     futureDate.setDate(today.getDate() + days);
-    
-    return this.appointmentsSubject.value.filter(appointment => 
+
+    return this.appointmentsSubject.value.filter(appointment =>
       appointment.appointmentDate >= today && appointment.appointmentDate <= futureDate
     ).sort((a, b) => a.appointmentDate.getTime() - b.appointmentDate.getTime());
   }
@@ -142,43 +142,43 @@ export class AppointmentService {
   deleteAppointment(id: string): boolean {
     const currentAppointments = this.appointmentsSubject.value;
     const filteredAppointments = currentAppointments.filter(appointment => appointment.id !== id);
-    
+
     if (filteredAppointments.length !== currentAppointments.length) {
       this.appointmentsSubject.next(filteredAppointments);
       return true;
     }
-    
+
     return false;
   }
 
   getAvailableSlots(date: Date): TimeSlot[] {
     const slots: TimeSlot[] = [];
     const appointments = this.getAppointmentsByDate(date);
-    
+
     const startTime = this.parseTime(this.workingHours.start);
     const endTime = this.parseTime(this.workingHours.end);
-    
+
     let currentTime = startTime;
-    
+
     while (currentTime < endTime) {
       const timeString = this.formatTime(currentTime);
-      const isBooked = appointments.some(appointment => 
+      const isBooked = appointments.some(appointment =>
         appointment.startTime === timeString
       );
-      
-      const bookedAppointment = appointments.find(appointment => 
+
+      const bookedAppointment = appointments.find(appointment =>
         appointment.startTime === timeString
       );
-      
+
       slots.push({
         time: timeString,
         available: !isBooked,
         appointmentId: bookedAppointment?.id
       });
-      
+
       currentTime = new Date(currentTime.getTime() + this.workingHours.slotDuration * 60000);
     }
-    
+
     return slots;
   }
 
@@ -258,8 +258,8 @@ export class AppointmentService {
 
   private isSameDay(date1: Date, date2: Date): boolean {
     return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate();
   }
 
   private getMockAppointments(): Appointment[] {

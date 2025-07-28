@@ -374,7 +374,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     }
     
     .search-input {
-      width: 100%;
+      width: 93%;
       padding: 0.75rem 1rem 0.75rem 2.5rem;
       border: 1px solid #d1d5db;
       border-radius: 8px;
@@ -806,28 +806,28 @@ export class PatientsComponent implements OnInit {
   filteredPatients: Patient[] = [];
   searchQuery = '';
   sortBy = 'name';
-  
+
   showAddPatientModal = false;
   showEditPatientModal = false;
   showViewPatientModal = false;
   selectedPatient: Patient | null = null;
-  
+
   patientForm: FormGroup;
-  
+
   constructor(
     private patientService: PatientService,
     private fb: FormBuilder
   ) {
     this.patientForm = this.createPatientForm();
   }
-  
+
   ngOnInit() {
     this.patientService.getPatients().subscribe(patients => {
       this.patients = patients;
       this.applyFilters();
     });
   }
-  
+
   createPatientForm(): FormGroup {
     return this.fb.group({
       firstName: ['', Validators.required],
@@ -851,23 +851,23 @@ export class PatientsComponent implements OnInit {
       notes: ['']
     });
   }
-  
+
   onSearch() {
     this.applyFilters();
   }
-  
+
   onSort() {
     this.applyFilters();
   }
-  
+
   applyFilters() {
     let filtered = [...this.patients];
-    
+
     // Apply search filter
     if (this.searchQuery.trim()) {
       filtered = this.patientService.searchPatients(this.searchQuery);
     }
-    
+
     // Apply sorting
     filtered.sort((a, b) => {
       switch (this.sortBy) {
@@ -884,27 +884,27 @@ export class PatientsComponent implements OnInit {
           return 0;
       }
     });
-    
+
     this.filteredPatients = filtered;
   }
-  
+
   viewPatient(patient: Patient) {
     this.selectedPatient = patient;
     this.showViewPatientModal = true;
   }
-  
+
   editPatient(patient: Patient) {
     this.selectedPatient = patient;
     this.populateForm(patient);
     this.showEditPatientModal = true;
   }
-  
+
   deletePatient(patientId: string) {
     if (confirm('Are you sure you want to delete this patient? This action cannot be undone.')) {
       this.patientService.deletePatient(patientId).subscribe();
     }
   }
-  
+
   populateForm(patient: Patient) {
     this.patientForm.patchValue({
       firstName: patient.firstName,
@@ -919,7 +919,7 @@ export class PatientsComponent implements OnInit {
       notes: patient.notes
     });
   }
-  
+
   onSubmit() {
     if (this.patientForm.valid) {
       const formData = this.patientForm.value;
@@ -942,7 +942,7 @@ export class PatientsComponent implements OnInit {
       }
     }
   }
-  
+
   closeModal() {
     this.showAddPatientModal = false;
     this.showEditPatientModal = false;

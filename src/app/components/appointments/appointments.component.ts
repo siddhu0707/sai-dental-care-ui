@@ -54,20 +54,112 @@ import { TranslationService } from '../../services/translation.service';
       <div class="appointments-content">
         <!-- Today's Schedule Tab -->
         <div *ngIf="activeTab === 'today'" class="tab-content">
-          <div class="schedule-grid">
+          <!-- Bulk Reminder Controls -->
+          <div class="bulk-reminder-controls" *ngIf="todayAppointments.length > 0 || tomorrowAppointments.length > 0">
+            <div class="reminder-header">
+              <h3>{{ 'appointments.todayTomorrowReminders' | translate }}</h3>
+              <div class="reminder-stats">
+                <span class="reminder-stat">
+                  📅 {{ 'common.today' | translate }}: {{ todayAppointments.length }}
+                </span>
+                <span class="reminder-stat">
+                  📅 {{ 'common.tomorrow' | translate }}: {{ tomorrowAppointments.length }}
+                </span>
+              </div>
+              <div class="reminder-actions">
+                <button (click)="selectAllUpcomingAppointments()" class="action-btn secondary small">
+                  {{ allUpcomingSelected ? ('common.deselectAll' | translate) : ('common.selectAll' | translate) }}
+                </button>
+                <button
+                  (click)="showReminderModal = true"
+                  [disabled]="selectedAppointments.length === 0"
+                  class="action-btn primary">
+                  <span class="btn-icon">📧</span>
+                  {{ 'appointments.sendReminders' | translate }} ({{ selectedAppointments.length }})
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="schedule-flex-container">
             <div class="time-column">
               <div class="time-header">{{ 'common.time' | translate }}</div>
               <div *ngFor="let slot of todaySlots" class="time-slot">
                 {{ slot.time }}
               </div>
             </div>
-            <div class="appointments-column">
-              <div class="appointments-header-cell">{{ 'appointments.todaySchedule' | translate }}</div>
+            <div class="appointments-column today">
+              <div class="appointments-header-cell today">
+                📅 {{ 'common.today' | translate }} - {{ 'appointments.schedule' | translate }}
+              </div>
               <div *ngFor="let slot of todaySlots" class="appointment-slot" [class.booked]="!slot.available">
                 <div *ngIf="!slot.available && slot.appointmentId" class="appointment-card">
                   <ng-container *ngFor="let appointment of todayAppointments">
                     <div *ngIf="appointment.id === slot.appointmentId" class="appointment-details">
-                      <h4 class="patient-name">{{ appointment.patientName }}</h4>
+                      <div class="appointment-header">
+                        <input
+                          type="checkbox"
+                          [checked]="isAppointmentSelected(appointment.id)"
+                          (change)="toggleAppointmentSelection(appointment.id)"
+                          class="appointment-checkbox"
+                          id="checkbox-{{ appointment.id }}">
+                        <label for="checkbox-{{ appointment.id }}" class="checkbox-label">
+                          <h4 class="patient-name">{{ appointment.patientName }}</h4>
+                          <span class="reminder-status" [class.sent]="appointment.reminder?.sent">
+                            {{ appointment.reminder?.sent ? ('appointments.reminderSent' | translate) : ('appointments.noReminder' | translate) }}
+                          </span>
+                        </label>
+                          <div class="appointment-actions">
+                        <button (click)="viewAppointment(appointment)" class="action-btn small">{{ 'common.view' | translate }}</button>
+                        <button (click)="editAppointment(appointment)" class="action-btn small">{{ 'common.edit' | translate }}</button>
+                        <button *ngIf="appointment.status === 'scheduled'"
+                                (click)="confirmAppointment(appointment.id)"
+                                class="action-btn small confirm">{{ 'common.confirm' | translate }}</button>
+                        <button *ngIf="appointment.status === 'confirmed'"
+                                (click)="markCompleted(appointment.id)"
+                                class="action-btn small complete">{{ 'appointments.complete' | translate }}</button>
+                      </div>
+                                              <div class="appointment-status" [class]="appointment.status">
+                        {{ appointment.status | titlecase }}
+
+                      </div>
+                      </div>
+                      <div class="type-duration">
+                      <p class="appointment-type">{{ appointment.type }}</p>
+                      <p class="appointment-duration">{{ appointment.duration }} minutes</p>
+                    </div>
+
+                    </div>
+                  </ng-container>
+                </div>
+                <div *ngIf="slot.available" class="empty-slot">
+                  <span>{{ 'appointments.available' | translate }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="appointments-column tomorrow">
+              <div class="appointments-header-cell tomorrow">
+                🌅 {{ 'common.tomorrow' | translate }} - {{ 'appointments.schedule' | translate }}
+              </div>
+              <div *ngFor="let slot of tomorrowSlots" class="appointment-slot" [class.booked]="!slot.available">
+                <div *ngIf="!slot.available && slot.appointmentId" class="appointment-card">
+                  <ng-container *ngFor="let appointment of tomorrowAppointments">
+                    <div *ngIf="appointment.id === slot.appointmentId" class="appointment-details">
+                      <div class="appointment-header">
+                        <input
+                          type="checkbox"
+                          [checked]="isAppointmentSelected(appointment.id)"
+                          (change)="toggleAppointmentSelection(appointment.id)"
+                          class="appointment-checkbox"
+                          id="checkbox-{{ appointment.id }}">
+                        <label for="checkbox-{{ appointment.id }}" class="checkbox-label">
+                          <h4 class="patient-name">{{ appointment.patientName }}</h4>
+                          <span class="reminder-status" [class.sent]="appointment.reminder?.sent">
+                            {{ appointment.reminder?.sent ? ('appointments.reminderSent' | translate) : ('appointments.noReminder' | translate) }}
+                          </span>
+                        </label>
+                      </div>
                       <p class="appointment-type">{{ appointment.type }}</p>
                       <p class="appointment-duration">{{ appointment.duration }} minutes</p>
                       <div class="appointment-status" [class]="appointment.status">
@@ -92,8 +184,9 @@ import { TranslationService } from '../../services/translation.service';
               </div>
             </div>
           </div>
+
         </div>
-        
+
         <!-- All Appointments Tab -->
         <div *ngIf="activeTab === 'all'" class="tab-content">
           <div class="appointments-controls">
@@ -142,7 +235,7 @@ import { TranslationService } from '../../services/translation.service';
               <div class="appointment-info">
                 <h3 class="patient-name">{{ appointment.patientName }}</h3>
                 <p class="appointment-type">{{ appointment.type }}</p>
-                <p class="doctor-name">👨‍⚕️ {{ appointment.doctorName }}</p>
+                <p class="doctor-name">👨‍���️ {{ appointment.doctorName }}</p>
                 <p *ngIf="appointment.notes" class="appointment-notes">{{ appointment.notes }}</p>
               </div>
               
@@ -155,7 +248,7 @@ import { TranslationService } from '../../services/translation.service';
                 </div>
               </div>
               
-              <div class="appointment-actions">
+              <div class="appointment-actions-all">
                 <button (click)="viewAppointment(appointment)" class="action-btn view">View</button>
                 <button (click)="editAppointment(appointment)" class="action-btn edit">Edit</button>
                 <button *ngIf="appointment.status === 'scheduled'" 
@@ -190,7 +283,7 @@ import { TranslationService } from '../../services/translation.service';
             
             <div class="calendar-grid">
               <div class="calendar-times">
-                <div class="time-header">Time</div>
+                <div class="time-header-cal">Time</div>
                 <div *ngFor="let time of workingHours" class="time-cell">{{ time }}</div>
               </div>
               
@@ -358,6 +451,115 @@ import { TranslationService } from '../../services/translation.service';
         </div>
       </div>
     </div>
+
+    <!-- Bulk Reminder Modal -->
+    <div *ngIf="showReminderModal" class="modal-overlay" (click)="closeReminderModal()">
+      <div class="modal-content reminder-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ 'appointments.sendReminders' | translate }}</h2>
+          <button (click)="closeReminderModal()" class="close-btn">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="selected-appointments">
+            <h3>{{ 'appointments.selectedAppointments' | translate }} ({{ selectedAppointments.length }})</h3>
+            <div class="selected-list">
+              <div *ngFor="let appointmentId of selectedAppointments" class="selected-item">
+                <!-- Today's appointments -->
+                <ng-container *ngFor="let appointment of todayAppointments">
+                  <div *ngIf="appointment.id === appointmentId" class="selected-appointment">
+                    <span class="patient-info">
+                      👤 {{ appointment.patientName }} - {{ appointment.startTime }}
+                      <span class="appointment-day today">{{ 'common.today' | translate }}</span>
+                    </span>
+                    <span class="appointment-type">{{ appointment.type }}</span>
+                  </div>
+                </ng-container>
+                <!-- Tomorrow's appointments -->
+                <ng-container *ngFor="let appointment of tomorrowAppointments">
+                  <div *ngIf="appointment.id === appointmentId" class="selected-appointment">
+                    <span class="patient-info">
+                      👤 {{ appointment.patientName }} - {{ appointment.startTime }}
+                      <span class="appointment-day tomorrow">{{ 'common.tomorrow' | translate }}</span>
+                    </span>
+                    <span class="appointment-type">{{ appointment.type }}</span>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+          <form [formGroup]="reminderForm" (ngSubmit)="sendBulkReminders()" class="reminder-form">
+            <div class="form-group">
+              <label for="reminderMessage">{{ 'appointments.customMessage' | translate }} *</label>
+              <textarea
+                id="reminderMessage"
+                formControlName="message"
+                class="form-textarea"
+                rows="4"
+                [placeholder]="'appointments.messagePlaceholder' | translate">
+              </textarea>
+              <div *ngIf="reminderForm.get('message')?.errors?.['required'] && reminderForm.get('message')?.touched"
+                   class="error-message">{{ 'validation.messageRequired' | translate }}</div>
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'appointments.reminderMethod' | translate }}</label>
+              <div class="method-options">
+                <label class="radio-option">
+                  <input type="radio" formControlName="method" value="sms" checked>
+                  <span>📱 {{ 'appointments.sms' | translate }}</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" formControlName="method" value="email">
+                  <span>📧 {{ 'appointments.email' | translate }}</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" formControlName="method" value="both">
+                  <span>📧📱 {{ 'appointments.both' | translate }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'appointments.sendTime' | translate }}</label>
+              <div class="time-options">
+                <label class="radio-option">
+                  <input type="radio" formControlName="sendTime" value="now" checked>
+                  <span>⚡ {{ 'appointments.sendNow' | translate }}</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" formControlName="sendTime" value="1hour">
+                  <span>🕐 {{ 'appointments.send1HourBefore' | translate }}</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" formControlName="sendTime" value="2hours">
+                  <span>🕑 {{ 'appointments.send2HoursBefore' | translate }}</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" formControlName="sendTime" value="1day">
+                  <span>📅 {{ 'appointments.send1DayBefore' | translate }}</span>
+                </label>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" (click)="closeReminderModal()" class="btn secondary">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button
+            type="submit"
+            (click)="sendBulkReminders()"
+            [disabled]="reminderForm.invalid || selectedAppointments.length === 0"
+            class="btn primary">
+            <span class="btn-icon">📧</span>
+            {{ 'appointments.sendReminders' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
   `,
   styles: [`
     .appointments-container {
@@ -433,18 +635,41 @@ import { TranslationService } from '../../services/translation.service';
       border-bottom-color: #0ea5e9;
     }
     
-    .schedule-grid {
-      display: grid;
-      grid-template-columns: 100px 1fr;
+    .schedule-flex-container {
+      display: flex;
       border: 1px solid #e5e7eb;
       border-radius: 8px;
       overflow: hidden;
       background: white;
+      min-height: 600px;
+    }
+
+    .schedule-grid {
+      display: flex;
+      width: 100%;
     }
     
     .time-column {
       background: #f9fafb;
       border-right: 1px solid #e5e7eb;
+      width: 100px;
+      flex-shrink: 0;
+    }
+
+    .appointments-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .appointments-column.today {
+      border-right: 2px solid #e5e7eb;
+      background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+    }
+
+    .appointments-column.tomorrow {
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
     }
     
     .time-header,
@@ -453,11 +678,25 @@ import { TranslationService } from '../../services/translation.service';
       font-weight: 600;
       background: #f3f4f6;
       border-bottom: 1px solid #e5e7eb;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .appointments-header-cell.today {
+      background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+      color: #166534;
+      border-bottom: 2px solid #16a34a;
+    }
+
+    .appointments-header-cell.tomorrow {
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+      color: #1e40af;
+      border-bottom: 2px solid #3b82f6;
     }
     
     .time-slot,
     .appointment-slot {
-      padding: 0.75rem;
+      padding: 0.5rem;
       border-bottom: 1px solid #e5e7eb;
       min-height: 60px;
     }
@@ -470,8 +709,12 @@ import { TranslationService } from '../../services/translation.service';
       background: white;
       border: 1px solid #d1d5db;
       border-radius: 6px;
-      padding: 0.75rem;
+      padding: 0.0rem;
       height: 100%;
+    }
+    .type-duration{
+      display:flex;
+      
     }
     
     .patient-name {
@@ -488,7 +731,7 @@ import { TranslationService } from '../../services/translation.service';
     }
     
     .appointment-duration {
-      margin: 0 0 0.5rem 0;
+      margin: 0.2rem 0 0.5rem 0.5rem;
       font-size: 0.8rem;
       color: #6b7280;
     }
@@ -528,7 +771,6 @@ import { TranslationService } from '../../services/translation.service';
       gap: 0.25rem;
       flex-wrap: wrap;
     }
-    
     .action-btn {
       padding: 0.25rem 0.5rem;
       border: none;
@@ -600,7 +842,7 @@ import { TranslationService } from '../../services/translation.service';
     }
     
     .search-input {
-      width: 100%;
+      width: 93%;
       padding: 0.75rem 1rem 0.75rem 2.5rem;
       border: 1px solid #d1d5db;
       border-radius: 8px;
@@ -767,8 +1009,8 @@ import { TranslationService } from '../../services/translation.service';
       border-right: 1px solid #e5e7eb;
     }
     
-    .time-header {
-      padding: 1rem 0.5rem;
+    .time-header-cal {
+      padding: 1.4rem 0.5rem;
       font-weight: 600;
       text-align: center;
       background: #f3f4f6;
@@ -776,7 +1018,7 @@ import { TranslationService } from '../../services/translation.service';
     }
     
     .time-cell {
-      padding: 0.5rem;
+      padding: 0.25rem;
       border-bottom: 1px solid #e5e7eb;
       text-align: center;
       font-size: 0.8rem;
@@ -1110,8 +1352,24 @@ import { TranslationService } from '../../services/translation.service';
         grid-template-columns: 1fr;
       }
       
-      .schedule-grid {
-        grid-template-columns: 1fr;
+      .schedule-flex-container {
+        flex-direction: column;
+        min-height: auto;
+      }
+
+      .appointments-column {
+        border-right: none !important;
+        border-bottom: 2px solid #e5e7eb;
+      }
+
+      .appointments-column:last-child {
+        border-bottom: none;
+      }
+
+      .time-column {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
       }
       
       .calendar-grid {
@@ -1120,6 +1378,327 @@ import { TranslationService } from '../../services/translation.service';
       
       .modal-overlay {
         padding: 1rem;
+      }
+    }
+
+    /* Bulk Reminder Styles */
+    .bulk-reminder-controls {
+      background: linear-gradient(135deg, #e0f2fe, #cffafe);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid #0ea5e9;
+    }
+
+    .reminder-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .reminder-header h3 {
+      margin: 0;
+      color: #0c4a6e;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .reminder-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .appointment-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .appointment-checkbox {
+      margin-top: 0.25rem;
+      transform: scale(1.2);
+      accent-color: #0ea5e9;
+    }
+
+    .checkbox-label {
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .checkbox-label .patient-name {
+      margin: 0 0 0.25rem 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .reminder-status {
+      font-size: 0.8rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 12px;
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .reminder-status.sent {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    .reminder-modal {
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .selected-appointments {
+      margin-bottom: 2rem;
+    }
+
+    .selected-appointments h3 {
+      margin: 0 0 1rem 0;
+      color: #1f2937;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .selected-list {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 1rem;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .selected-item {
+      margin-bottom: 0.75rem;
+    }
+
+    .selected-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .selected-appointment {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .patient-info {
+      font-weight: 500;
+      color: #1f2937;
+    }
+
+    .appointment-type {
+      font-size: 0.9rem;
+      color: #6b7280;
+      background: #f3f4f6;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .reminder-form {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      border: 1px solid #e5e7eb;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    .form-textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .method-options,
+    .time-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .radio-option:hover {
+      background: #f9fafb;
+      border-color: #3b82f6;
+    }
+
+    .radio-option input[type="radio"] {
+      accent-color: #0ea5e9;
+    }
+
+    .radio-option span {
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      padding: 1.5rem;
+      border-top: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+
+    .action-btn.primary:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .action-btn.small {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    .error-message {
+      color: #dc2626;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .reminder-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .reminder-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    /* Tomorrow Section Styles */
+    .tomorrow-section {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 2px solid #e5e7eb;
+    }
+
+    .section-title {
+      margin: 0 0 1.5rem 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-title::before {
+      content: '📅';
+      font-size: 1.1rem;
+    }
+
+    .appointments-list {
+      display: inline;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .appointment-card.tomorrow {
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      border: 1px solid #0ea5e9;
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .appointment-card.tomorrow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(14, 165, 233, 0.15);
+    }
+
+    .appointment-day {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 12px;
+      font-weight: 500;
+      margin-left: 0.5rem;
+    }
+
+    .appointment-day.today {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    .appointment-day.tomorrow {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    .reminder-stats {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .reminder-stat {
+      background: rgba(255, 255, 255, 0.7);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #0c4a6e;
+      border: 1px solid rgba(14, 165, 233, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .reminder-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .appointments-list {
+        grid-template-columns: 1fr;
+      }
+
+      .method-options,
+      .time-options {
+        gap: 0.5rem;
+      }
+
+      .modal-footer {
+        flex-direction: column;
       }
     }
   `]
@@ -1135,22 +1714,31 @@ export class AppointmentsComponent implements OnInit {
   appointments: Appointment[] = [];
   filteredAppointments: Appointment[] = [];
   todayAppointments: Appointment[] = [];
+  tomorrowAppointments: Appointment[] = [];
   todaySlots: TimeSlot[] = [];
-  
+  tomorrowSlots: TimeSlot[] = [];
+
   patients: Patient[] = [];
   searchQuery = '';
   statusFilter = '';
   dateFilter = '';
-  
+
   showScheduleModal = false;
   showViewModal = false;
+  showReminderModal = false;
   editingAppointment: Appointment | null = null;
   selectedAppointment: Appointment | null = null;
-  
+
+  // Reminder functionality
+  selectedAppointments: string[] = [];
+  allTodaySelected = false;
+  allUpcomingSelected = false;
+  reminderForm: FormGroup;
+
   appointmentForm: FormGroup;
   appointmentTypes = Object.values(AppointmentType);
   availableSlots: TimeSlot[] = [];
-  
+
   // Calendar view properties
   currentWeekStart: Date = new Date();
   currentWeekEnd: Date = new Date();
@@ -1164,6 +1752,7 @@ export class AppointmentsComponent implements OnInit {
     private translationService: TranslationService
   ) {
     this.appointmentForm = this.createAppointmentForm();
+    this.reminderForm = this.createReminderForm();
     this.initializeWeek();
     this.generateWorkingHours();
   }
@@ -1186,8 +1775,13 @@ export class AppointmentsComponent implements OnInit {
 
   loadTodayData() {
     const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
     this.todayAppointments = this.appointmentService.getAppointmentsByDate(today);
+    this.tomorrowAppointments = this.appointmentService.getAppointmentsByDate(tomorrow);
     this.todaySlots = this.appointmentService.getAvailableSlots(today);
+    this.tomorrowSlots = this.appointmentService.getAvailableSlots(tomorrow);
   }
 
   createAppointmentForm(): FormGroup {
@@ -1286,7 +1880,7 @@ export class AppointmentsComponent implements OnInit {
   onSubmit() {
     if (this.appointmentForm.valid) {
       const formData = this.appointmentForm.value;
-      
+
       const appointmentData: CreateAppointmentRequest = {
         ...formData,
         appointmentDate: new Date(formData.appointmentDate)
@@ -1317,13 +1911,13 @@ export class AppointmentsComponent implements OnInit {
     const today = new Date();
     const dayOfWeek = today.getDay();
     const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    
+
     this.currentWeekStart = new Date(today);
     this.currentWeekStart.setDate(today.getDate() + mondayOffset);
-    
+
     this.currentWeekEnd = new Date(this.currentWeekStart);
     this.currentWeekEnd.setDate(this.currentWeekStart.getDate() + 6);
-    
+
     this.generateWeekDays();
   }
 
@@ -1338,7 +1932,7 @@ export class AppointmentsComponent implements OnInit {
 
   generateWorkingHours() {
     this.workingHours = [];
-    for (let hour = 9; hour < 17; hour++) {
+    for (let hour = 9; hour < 21; hour++) {
       this.workingHours.push(`${hour.toString().padStart(2, '0')}:00`);
       this.workingHours.push(`${hour.toString().padStart(2, '0')}:30`);
     }
@@ -1364,8 +1958,8 @@ export class AppointmentsComponent implements OnInit {
 
   private isSameDay(date1: Date, date2: Date): boolean {
     return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate();
   }
 
   getAppointmentTypeTranslation(type: string): string {
@@ -1383,5 +1977,101 @@ export class AppointmentsComponent implements OnInit {
 
     const translationKey = typeMap[type] || type;
     return this.translationService.translate(translationKey);
+  }
+
+  // Reminder functionality methods
+  createReminderForm(): FormGroup {
+    return this.fb.group({
+      message: ['', Validators.required],
+      method: ['sms'],
+      sendTime: ['now']
+    });
+  }
+
+  toggleAppointmentSelection(appointmentId: string) {
+    const index = this.selectedAppointments.indexOf(appointmentId);
+    if (index > -1) {
+      this.selectedAppointments.splice(index, 1);
+    } else {
+      this.selectedAppointments.push(appointmentId);
+    }
+    this.updateSelectAllState();
+  }
+
+  isAppointmentSelected(appointmentId: string): boolean {
+    return this.selectedAppointments.includes(appointmentId);
+  }
+
+  selectAllUpcomingAppointments() {
+    if (this.allUpcomingSelected) {
+      this.selectedAppointments = [];
+    } else {
+      const allUpcomingAppointments = [...this.todayAppointments, ...this.tomorrowAppointments];
+      this.selectedAppointments = allUpcomingAppointments.map(appointment => appointment.id);
+    }
+    this.updateSelectAllState();
+  }
+
+  updateSelectAllState() {
+    const totalUpcomingAppointments = this.todayAppointments.length + this.tomorrowAppointments.length;
+    this.allTodaySelected = this.todayAppointments.length > 0 &&
+      this.selectedAppointments.length === this.todayAppointments.length;
+    this.allUpcomingSelected = totalUpcomingAppointments > 0 &&
+      this.selectedAppointments.length === totalUpcomingAppointments;
+  }
+
+  closeReminderModal() {
+    this.showReminderModal = false;
+    this.reminderForm.reset({
+      message: '',
+      method: 'sms',
+      sendTime: 'now'
+    });
+  }
+
+  sendBulkReminders() {
+    if (this.reminderForm.valid && this.selectedAppointments.length > 0) {
+      const formData = this.reminderForm.value;
+
+      // Get appointment details for the message
+      const allUpcomingAppointments = [...this.todayAppointments, ...this.tomorrowAppointments];
+      const selectedAppointmentDetails = allUpcomingAppointments.filter(
+        appointment => this.selectedAppointments.includes(appointment.id)
+      );
+
+      // Simulate sending reminders (in a real app, this would call an API)
+      this.selectedAppointments.forEach(appointmentId => {
+        const appointment = allUpcomingAppointments.find(a => a.id === appointmentId);
+        if (appointment) {
+          // Update the appointment with reminder sent status
+          this.appointmentService.sendReminder(appointmentId);
+
+          // Show success message (in a real app, you'd handle the actual sending)
+          console.log(`Reminder sent to ${appointment.patientName}:`, {
+            message: formData.message,
+            method: formData.method,
+            sendTime: formData.sendTime,
+            appointmentTime: appointment.startTime,
+            appointmentType: appointment.type
+          });
+        }
+      });
+
+      // Show success notification
+      alert(`Reminders sent successfully to ${this.selectedAppointments.length} patients!`);
+
+      // Reset selection and close modal
+      this.selectedAppointments = [];
+      this.updateSelectAllState();
+      this.closeReminderModal();
+
+      // Reload data to reflect updated reminder status
+      this.loadData();
+    }
+  }
+
+  // Helper method to format custom reminder message with appointment details
+  formatReminderMessage(baseMessage: string, appointment: Appointment): string {
+    return `${baseMessage}\n\nAppointment Details:\n📅 Date: ${appointment.appointmentDate.toLocaleDateString()}\n🕐 Time: ${appointment.startTime}\n🏥 Type: ${appointment.type}\n👨‍⚕️ Doctor: ${appointment.doctorName}`;
   }
 }
