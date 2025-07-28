@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { Appointment, CreateAppointmentRequest, AppointmentType, AppointmentStatus, TimeSlot, DaySchedule } from '../models/appointment.model';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,31 @@ export class AppointmentService {
     slotDuration: 30 // minutes
   };
 
-  constructor() {}
+  constructor(private apiService: ApiService) {
+    this.loadAppointments();
+  }
+
+  private loadAppointments() {
+    this.apiService.getAppointments().pipe(
+      catchError(error => {
+        console.error('Error loading appointments:', error);
+        return of(this.getMockAppointments());
+      })
+    ).subscribe(appointments => {
+      try {
+        const processedAppointments = appointments.map(appointment => ({
+          ...appointment,
+          appointmentDate: new Date(appointment.appointmentDate),
+          createdDate: new Date(appointment.createdDate),
+          updatedDate: new Date(appointment.updatedDate)
+        }));
+        this.appointmentsSubject.next(processedAppointments);
+      } catch (error) {
+        console.error('Error processing appointments data:', error);
+        this.appointmentsSubject.next(this.getMockAppointments());
+      }
+    });
+  }
 
   getAppointments(): Observable<Appointment[]> {
     return this.appointments$;
@@ -52,47 +78,65 @@ export class AppointmentService {
     ).sort((a, b) => a.appointmentDate.getTime() - b.appointmentDate.getTime());
   }
 
-  createAppointment(appointmentData: CreateAppointmentRequest): Appointment {
+  createAppointment(appointmentData: CreateAppointmentRequest): Observable<Appointment> {
     const endTime = this.calculateEndTime(appointmentData.startTime, appointmentData.duration);
-    
-    const newAppointment: Appointment = {
-      id: this.generateId(),
+
+    const newAppointment: any = {
       ...appointmentData,
       patientName: this.getPatientNameById(appointmentData.patientId),
       endTime,
       status: AppointmentStatus.SCHEDULED,
-      createdDate: new Date(),
-      updatedDate: new Date(),
+      createdDate: new Date().toISOString(),
+      updatedDate: new Date().toISOString(),
       reminder: {
         sent: false
       }
     };
 
-    const currentAppointments = this.appointmentsSubject.value;
-    this.appointmentsSubject.next([...currentAppointments, newAppointment]);
-    
-    return newAppointment;
+    return this.apiService.createAppointment(newAppointment).pipe(
+      tap(() => this.loadAppointments()),
+      catchError(error => {
+        console.error('Error creating appointment:', error);
+        // Fallback to local creation if API fails
+        const localAppointment: Appointment = {
+          ...newAppointment,
+          id: this.generateId(),
+          appointmentDate: new Date(newAppointment.appointmentDate),
+          createdDate: new Date(),
+          updatedDate: new Date()
+        };
+        const currentAppointments = this.appointmentsSubject.value;
+        this.appointmentsSubject.next([...currentAppointments, localAppointment]);
+        return of(localAppointment);
+      })
+    );
   }
 
-  updateAppointment(id: string, appointmentData: Partial<Appointment>): Appointment | null {
-    const currentAppointments = this.appointmentsSubject.value;
-    const appointmentIndex = currentAppointments.findIndex(appointment => appointment.id === id);
-    
-    if (appointmentIndex === -1) {
-      return null;
-    }
+  updateAppointment(id: string, appointmentData: Partial<Appointment>): Observable<Appointment> {
+    return this.apiService.updateAppointment(id, appointmentData).pipe(
+      tap(() => this.loadAppointments()),
+      catchError(error => {
+        console.error('Error updating appointment:', error);
+        // Fallback to local update if API fails
+        const currentAppointments = this.appointmentsSubject.value;
+        const appointmentIndex = currentAppointments.findIndex(appointment => appointment.id === id);
 
-    const updatedAppointment = { 
-      ...currentAppointments[appointmentIndex], 
-      ...appointmentData,
-      updatedDate: new Date()
-    };
-    
-    const updatedAppointments = [...currentAppointments];
-    updatedAppointments[appointmentIndex] = updatedAppointment;
-    
-    this.appointmentsSubject.next(updatedAppointments);
-    return updatedAppointment;
+        if (appointmentIndex !== -1) {
+          const updatedAppointment = {
+            ...currentAppointments[appointmentIndex],
+            ...appointmentData,
+            updatedDate: new Date()
+          };
+
+          const updatedAppointments = [...currentAppointments];
+          updatedAppointments[appointmentIndex] = updatedAppointment;
+
+          this.appointmentsSubject.next(updatedAppointments);
+          return of(updatedAppointment);
+        }
+        throw error;
+      })
+    );
   }
 
   deleteAppointment(id: string): boolean {
@@ -145,45 +189,40 @@ export class AppointmentService {
     };
   }
 
-  confirmAppointment(id: string): boolean {
-    const appointment = this.updateAppointment(id, { 
-      status: AppointmentStatus.CONFIRMED 
-    });
-    return appointment !== null;
+  confirmAppointment(id: string): void {
+    this.updateAppointment(id, {
+      status: AppointmentStatus.CONFIRMED
+    }).subscribe();
   }
 
-  cancelAppointment(id: string): boolean {
-    const appointment = this.updateAppointment(id, { 
-      status: AppointmentStatus.CANCELLED 
-    });
-    return appointment !== null;
+  cancelAppointment(id: string): void {
+    this.updateAppointment(id, {
+      status: AppointmentStatus.CANCELLED
+    }).subscribe();
   }
 
-  markAsCompleted(id: string): boolean {
-    const appointment = this.updateAppointment(id, { 
-      status: AppointmentStatus.COMPLETED 
-    });
-    return appointment !== null;
+  markAsCompleted(id: string): void {
+    this.updateAppointment(id, {
+      status: AppointmentStatus.COMPLETED
+    }).subscribe();
   }
 
-  rescheduleAppointment(id: string, newDate: Date, newTime: string): boolean {
-    const appointment = this.updateAppointment(id, {
+  rescheduleAppointment(id: string, newDate: Date, newTime: string): void {
+    this.updateAppointment(id, {
       appointmentDate: newDate,
       startTime: newTime,
       endTime: this.calculateEndTime(newTime, this.getAppointmentById(id)?.duration || 30),
       status: AppointmentStatus.RESCHEDULED
-    });
-    return appointment !== null;
+    }).subscribe();
   }
 
-  sendReminder(id: string): boolean {
-    const appointment = this.updateAppointment(id, {
+  sendReminder(id: string): void {
+    this.updateAppointment(id, {
       reminder: {
         sent: true,
         sentDate: new Date()
       }
-    });
-    return appointment !== null;
+    }).subscribe();
   }
 
   private generateId(): string {

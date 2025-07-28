@@ -7,6 +7,8 @@ import { PatientBalanceService } from '../../services/patient-balance.service';
 import { Bill, CreateBillRequest, BillStatus, PaymentMethod, ServiceTemplate, ServiceCategory, BillItem, Payment } from '../../models/billing.model';
 import { Patient } from '../../models/patient.model';
 import { PatientBalance, PatientPaymentSummary } from '../../models/patient-balance.model';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-billing',
@@ -31,7 +33,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
         <div class="stat-card revenue">
           <div class="stat-icon">💰</div>
           <div class="stat-content">
-            <h3 class="stat-value">\${{ monthlyRevenue | number:'1.2-2' }}</h3>
+            <h3 class="stat-value">₹{{ monthlyRevenue | number:'1.2-2' }}</h3>
             <p class="stat-label">Monthly Revenue</p>
           </div>
         </div>
@@ -39,7 +41,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
         <div class="stat-card outstanding">
           <div class="stat-icon">⏰</div>
           <div class="stat-content">
-            <h3 class="stat-value">\${{ outstandingAmount | number:'1.2-2' }}</h3>
+            <h3 class="stat-value">₹{{ outstandingAmount | number:'1.2-2' }}</h3>
             <p class="stat-label">Outstanding Amount</p>
           </div>
         </div>
@@ -118,7 +120,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
               <div class="table-cell">{{ bill.issueDate | date:'MMM d, y' }}</div>
               <div class="table-cell">{{ bill.dueDate | date:'MMM d, y' }}</div>
               <div class="table-cell">
-                <strong>\${{ bill.total | number:'1.2-2' }}</strong>
+                <strong>₹{{ bill.total | number:'1.2-2' }}</strong>
               </div>
               <div class="table-cell">
                 <span class="status-badge" [class]="bill.status">
@@ -156,7 +158,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                 <p>Reference: {{ payment.reference }}</p>
               </div>
               <div class="payment-details">
-                <div class="payment-amount">\${{ payment.amount | number:'1.2-2' }}</div>
+                <div class="payment-amount">₹{{ payment.amount | number:'1.2-2' }}</div>
                 <div class="payment-method">{{ payment.method | titlecase }}</div>
                 <div class="payment-date">{{ payment.date | date:'MMM d, y' }}</div>
               </div>
@@ -171,7 +173,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
               <div class="summary-card">
                 <h3>Total Outstanding</h3>
                 <div class="summary-amount outstanding">
-                  \${{ getTotalOutstandingAmount() | number:'1.2-2' }}
+                  ₹{{ getTotalOutstandingAmount() | number:'1.2-2' }}
                 </div>
               </div>
               <div class="summary-card">
@@ -203,14 +205,14 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                   <strong>{{ balance.patientName }}</strong>
                 </div>
                 <div class="table-cell">
-                  \${{ balance.totalBilled | number:'1.2-2' }}
+                  ₹{{ balance.totalBilled | number:'1.2-2' }}
                 </div>
                 <div class="table-cell">
-                  \${{ balance.totalPaid | number:'1.2-2' }}
+                  ₹{{ balance.totalPaid | number:'1.2-2' }}
                 </div>
                 <div class="table-cell">
                   <span class="balance-amount outstanding">
-                    \${{ balance.remainingBalance | number:'1.2-2' }}
+                    ₹{{ balance.remainingBalance | number:'1.2-2' }}
                   </span>
                 </div>
                 <div class="table-cell">
@@ -256,7 +258,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                 <span class="template-category">{{ template.category | titlecase }}</span>
               </div>
               <p class="template-description">{{ template.description }}</p>
-              <div class="template-price">\${{ template.defaultPrice | number:'1.2-2' }}</div>
+              <div class="template-price">₹{{ template.defaultPrice | number:'1.2-2' }}</div>
             </div>
           </div>
         </div>
@@ -339,7 +341,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                   
                   <div class="form-group">
                     <label>Total</label>
-                    <div class="total-display">\${{ getItemTotal(i) | number:'1.2-2' }}</div>
+                    <div class="total-display">₹{{ getItemTotal(i) | number:'1.2-2' }}</div>
                   </div>
                   
                   <div class="form-group">
@@ -355,19 +357,19 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
           <div class="bill-summary">
             <div class="summary-row">
               <span>Subtotal:</span>
-              <span>\${{ calculateSubtotal() | number:'1.2-2' }}</span>
+              <span>₹{{ calculateSubtotal() | number:'1.2-2' }}</span>
             </div>
             <div class="summary-row">
               <span>Tax (8%):</span>
-              <span>\${{ calculateTax() | number:'1.2-2' }}</span>
+              <span>₹{{ calculateTax() | number:'1.2-2' }}</span>
             </div>
             <div class="summary-row">
               <span>Discount:</span>
-              <span>-\${{ billForm.get('discount')?.value || 0 | number:'1.2-2' }}</span>
+              <span>-₹{{ billForm.get('discount')?.value || 0 | number:'1.2-2' }}</span>
             </div>
             <div class="summary-row total">
               <span>Total:</span>
-              <span>\${{ calculateTotal() | number:'1.2-2' }}</span>
+              <span>₹{{ calculateTotal() | number:'1.2-2' }}</span>
             </div>
           </div>
           
@@ -423,26 +425,26 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
               <div>{{ item.description }}</div>
               <div>{{ item.category | titlecase }}</div>
               <div>{{ item.quantity }}</div>
-              <div>\${{ item.unitPrice | number:'1.2-2' }}</div>
-              <div>\${{ item.total | number:'1.2-2' }}</div>
+              <div>₹{{ item.unitPrice | number:'1.2-2' }}</div>
+              <div>₹{{ item.total | number:'1.2-2' }}</div>
             </div>
           </div>
           
           <div class="bill-totals">
             <div class="totals-row">
               <span>Subtotal:</span>
-              <span>\${{ selectedBill.subtotal | number:'1.2-2' }}</span>
+              <span>₹{{ selectedBill.subtotal | number:'1.2-2' }}</span>
             </div>
             <div class="totals-row">
               <span>Tax:</span>
-              <span>\${{ selectedBill.tax | number:'1.2-2' }}</span>
+              <span>₹{{ selectedBill.tax | number:'1.2-2' }}</span>
             </div>
             <div *ngIf="selectedBill.discount > 0" class="totals-row">
               <span>Discount:</span>
-              <span>-\${{ selectedBill.discount | number:'1.2-2' }}</span>
+              <span>-₹{{ selectedBill.discount | number:'1.2-2' }}</span>
             </div>
             <div class="totals-row total">
-              <strong>Total: \${{ selectedBill.total | number:'1.2-2' }}</strong>
+              <strong>Total: ₹{{ selectedBill.total | number:'1.2-2' }}</strong>
             </div>
           </div>
           
@@ -1701,9 +1703,88 @@ export class BillingComponent implements OnInit {
   }
 
   downloadBill(bill: Bill) {
-    // In a real application, this would generate and download a PDF
-    console.log('Downloading bill:', bill.billNumber);
-    alert('PDF download would be implemented here');
+    const pdf = new jsPDF();
+
+    // Set up the PDF document
+    pdf.setFontSize(20);
+    pdf.text('Sai Dental Care', 20, 30);
+
+    pdf.setFontSize(12);
+    pdf.text('123 Main Street', 20, 40);
+    pdf.text('City, State 12345', 20, 50);
+    pdf.text('Phone: (555) 123-4567', 20, 60);
+
+    // Bill header
+    pdf.setFontSize(16);
+    pdf.text(`Invoice: ${bill.billNumber}`, 120, 30);
+
+    pdf.setFontSize(12);
+    pdf.text(`Issue Date: ${bill.issueDate.toLocaleDateString()}`, 120, 40);
+    pdf.text(`Due Date: ${bill.dueDate.toLocaleDateString()}`, 120, 50);
+    pdf.text(`Status: ${bill.status.toUpperCase()}`, 120, 60);
+
+    // Patient information
+    pdf.setFontSize(14);
+    pdf.text('Bill To:', 20, 80);
+    pdf.setFontSize(12);
+    pdf.text(bill.patientName, 20, 90);
+
+    // Bill items table
+    let yPosition = 110;
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Description', 20, yPosition);
+    pdf.text('Category', 80, yPosition);
+    pdf.text('Qty', 120, yPosition);
+    pdf.text('Unit Price', 140, yPosition);
+    pdf.text('Total', 170, yPosition);
+
+    pdf.setFont('helvetica', 'normal');
+    yPosition += 10;
+
+    bill.items.forEach(item => {
+      pdf.text(item.description, 20, yPosition);
+      pdf.text(item.category, 80, yPosition);
+      pdf.text(item.quantity.toString(), 120, yPosition);
+      pdf.text(`₹${item.unitPrice.toFixed(2)}`, 140, yPosition);
+      pdf.text(`₹${item.total.toFixed(2)}`, 170, yPosition);
+      yPosition += 10;
+    });
+
+    // Totals
+    yPosition += 10;
+    pdf.text(`Subtotal: ₹${bill.subtotal.toFixed(2)}`, 120, yPosition);
+    yPosition += 10;
+    pdf.text(`Tax: ₹${bill.tax.toFixed(2)}`, 120, yPosition);
+
+    if (bill.discount > 0) {
+      yPosition += 10;
+      pdf.text(`Discount: -₹${bill.discount.toFixed(2)}`, 120, yPosition);
+    }
+
+    yPosition += 10;
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(`Total: ₹${bill.total.toFixed(2)}`, 120, yPosition);
+
+    // Notes
+    if (bill.notes) {
+      yPosition += 20;
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('Notes:', 20, yPosition);
+      yPosition += 10;
+
+      // Split long notes into multiple lines
+      const splitNotes = pdf.splitTextToSize(bill.notes, 170);
+      pdf.text(splitNotes, 20, yPosition);
+    }
+
+    // Footer
+    const pageHeight = pdf.internal.pageSize.height;
+    pdf.setFontSize(10);
+    pdf.text('Thank you for choosing Sai Dental Care!', 20, pageHeight - 20);
+
+    // Download the PDF
+    pdf.save(`${bill.billNumber}.pdf`);
   }
 
   getBillByPayment(billId: string): Bill | undefined {

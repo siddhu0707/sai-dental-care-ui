@@ -76,7 +76,20 @@ export class PatientService {
 
   updatePatient(id: string, patientData: Partial<Patient>): Observable<Patient> {
     return this.apiService.updatePatient(id, patientData).pipe(
-      tap(() => this.loadPatients())
+      tap(() => this.loadPatients()),
+      catchError(error => {
+        console.error('Error updating patient:', error);
+        // Fallback to local update if API fails
+        const currentPatients = this.patientsSubject.value;
+        const patientIndex = currentPatients.findIndex(p => p.id === id);
+        if (patientIndex !== -1) {
+          const updatedPatients = [...currentPatients];
+          updatedPatients[patientIndex] = { ...updatedPatients[patientIndex], ...patientData };
+          this.patientsSubject.next(updatedPatients);
+          return of(updatedPatients[patientIndex]);
+        }
+        throw error;
+      })
     );
   }
 

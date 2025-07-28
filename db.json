@@ -13,8 +13,13 @@
         "state": "Karnataka",
         "zipCode": "560001"
       },
-      "medicalHistory": ["Hypertension", "Diabetes Type 2"],
-      "allergies": ["Penicillin"],
+      "medicalHistory": [
+        "Hypertension",
+        "Diabetes Type 2"
+      ],
+      "allergies": [
+        "Penicillin"
+      ],
       "emergencyContact": {
         "name": "Priya Kumar",
         "phone": "+91 98765 43211",
@@ -39,7 +44,9 @@
         "zipCode": "400001"
       },
       "medicalHistory": [],
-      "allergies": ["Latex"],
+      "allergies": [
+        "Latex"
+      ],
       "emergencyContact": {
         "name": "Vikram Sharma",
         "phone": "+91 87654 32110",
@@ -63,7 +70,9 @@
         "state": "Maharashtra",
         "zipCode": "411001"
       },
-      "medicalHistory": ["Heart Disease"],
+      "medicalHistory": [
+        "Heart Disease"
+      ],
       "allergies": [],
       "emergencyContact": {
         "name": "Sunita Patel",
@@ -82,10 +91,10 @@
       "patientId": "patient_001",
       "patientName": "Rajesh Kumar",
       "doctorName": "Dr. Sai Prasad",
-      "appointmentDate": "2024-01-21",
+      "appointmentDate": "2024-01-21T00:00:00.000Z",
       "startTime": "09:00",
       "endTime": "09:30",
-      "type": "Routine Cleaning",
+      "type": "Dental Filling",
       "status": "confirmed",
       "duration": 30,
       "notes": "Regular cleaning appointment",
@@ -128,6 +137,24 @@
       "notes": "Root canal treatment - session 2",
       "createdDate": "2024-01-15",
       "updatedDate": "2024-01-15",
+      "reminder": {
+        "sent": false
+      }
+    },
+    {
+      "id": "c8ca",
+      "patientId": "patient_001",
+      "appointmentDate": "2025-07-28T00:00:00.000Z",
+      "startTime": "09:30",
+      "type": "Consultation",
+      "duration": "60",
+      "doctorName": "Dr. Johnson",
+      "notes": "",
+      "patientName": "John Doe",
+      "endTime": "10:30",
+      "status": "scheduled",
+      "createdDate": "2025-07-28T17:07:17.723Z",
+      "updatedDate": "2025-07-28T17:07:17.723Z",
       "reminder": {
         "sent": false
       }

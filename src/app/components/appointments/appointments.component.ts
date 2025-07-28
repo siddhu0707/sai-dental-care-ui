@@ -127,7 +127,7 @@ import { Patient } from '../../models/patient.model';
               <div class="appointment-info">
                 <h3 class="patient-name">{{ appointment.patientName }}</h3>
                 <p class="appointment-type">{{ appointment.type }}</p>
-                <p class="doctor-name">👨‍⚕️ {{ appointment.doctorName }}</p>
+                <p class="doctor-name">��‍⚕️ {{ appointment.doctorName }}</p>
                 <p *ngIf="appointment.notes" class="appointment-notes">{{ appointment.notes }}</p>
               </div>
               
@@ -1277,9 +1277,9 @@ export class AppointmentsComponent implements OnInit {
       };
 
       if (this.editingAppointment) {
-        this.appointmentService.updateAppointment(this.editingAppointment.id, appointmentData);
+        this.appointmentService.updateAppointment(this.editingAppointment.id, appointmentData).subscribe();
       } else {
-        this.appointmentService.createAppointment(appointmentData);
+        this.appointmentService.createAppointment(appointmentData).subscribe();
       }
 
       this.closeModal();
