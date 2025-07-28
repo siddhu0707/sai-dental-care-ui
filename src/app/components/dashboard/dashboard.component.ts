@@ -3,16 +3,17 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PatientBalanceService } from '../../services/patient-balance.service';
 import { PatientBalance, PatientPaymentSummary } from '../../models/patient-balance.model';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   template: `
     <div class="dashboard-container">
       <header class="dashboard-header">
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-subtitle">Welcome back, Dr. Smith! Here's your clinic overview.</p>
+        <h1 class="page-title">{{ 'dashboard.title' | translate }}</h1>
+        <p class="page-subtitle">{{ 'dashboard.subtitle' | translate }}</p>
       </header>
       
       <div class="stats-grid">
@@ -20,31 +21,31 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
           <div class="stat-icon">👥</div>
           <div class="stat-content">
             <h3 class="stat-value">{{ totalPatients }}</h3>
-            <p class="stat-label">Total Patients</p>
+            <p class="stat-label">{{ 'dashboard.totalPatients' | translate }}</p>
           </div>
         </div>
-        
+
         <div class="stat-card appointments">
           <div class="stat-icon">📅</div>
           <div class="stat-content">
             <h3 class="stat-value">{{ todayAppointments }}</h3>
-            <p class="stat-label">Today's Appointments</p>
+            <p class="stat-label">{{ 'dashboard.todayAppointments' | translate }}</p>
           </div>
         </div>
-        
+
         <div class="stat-card revenue">
           <div class="stat-icon">💰</div>
           <div class="stat-content">
             <h3 class="stat-value">₹{{ monthlyRevenue | number }}</h3>
-            <p class="stat-label">Monthly Revenue</p>
+            <p class="stat-label">{{ 'dashboard.monthlyRevenue' | translate }}</p>
           </div>
         </div>
-        
+
         <div class="stat-card pending">
           <div class="stat-icon">⏰</div>
           <div class="stat-content">
             <h3 class="stat-value">{{ pendingBills }}</h3>
-            <p class="stat-label">Pending Bills</p>
+            <p class="stat-label">{{ 'dashboard.pendingBills' | translate }}</p>
           </div>
         </div>
       </div>
@@ -53,8 +54,8 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
         <div class="content-left">
           <div class="widget">
             <div class="widget-header">
-              <h3 class="widget-title">Today's Appointments</h3>
-              <a routerLink="/appointments" class="view-all-link">View All</a>
+              <h3 class="widget-title">{{ 'dashboard.todayAppointments' | translate }}</h3>
+              <a routerLink="/appointments" class="view-all-link">{{ 'common.view' | translate }} {{ 'common.all' | translate }}</a>
             </div>
             <div class="appointment-list">
               <div *ngFor="let appointment of upcomingAppointments" class="appointment-item">
@@ -69,15 +70,15 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
               </div>
               
               <div *ngIf="upcomingAppointments.length === 0" class="empty-state">
-                <p>No appointments scheduled for today</p>
+                <p>{{ 'common.noAppointments' | translate }}</p>
               </div>
             </div>
           </div>
-          
+
           <div class="widget">
             <div class="widget-header">
-              <h3 class="widget-title">Recent Patients</h3>
-              <a routerLink="/patients" class="view-all-link">View All</a>
+              <h3 class="widget-title">{{ 'common.recent' | translate }} {{ 'nav.patients' | translate }}</h3>
+              <a routerLink="/patients" class="view-all-link">{{ 'common.view' | translate }} {{ 'common.all' | translate }}</a>
             </div>
             <div class="patient-list">
               <div *ngFor="let patient of recentPatients" class="patient-item">
@@ -87,7 +88,7 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
                   <p class="patient-details">{{ patient.phone }} • Last visit: {{ patient.lastVisit }}</p>
                 </div>
                 <div class="patient-actions">
-                  <button class="action-btn">View</button>
+                  <button class="action-btn">{{ 'common.view' | translate }}</button>
                 </div>
               </div>
             </div>
@@ -97,30 +98,30 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
         <div class="content-right">
           <div class="widget">
             <div class="widget-header">
-              <h3 class="widget-title">Outstanding Balances</h3>
-              <a routerLink="/billing" class="view-all-link">View All</a>
+              <h3 class="widget-title">{{ 'billing.outstandingAmount' | translate }}</h3>
+              <a routerLink="/billing" class="view-all-link">{{ 'common.view' | translate }} {{ 'common.all' | translate }}</a>
             </div>
             <div class="balance-list">
               <div *ngFor="let balance of topDebtors" class="balance-item">
                 <div class="balance-patient">
                   <h4 class="patient-name">{{ balance.patientName }}</h4>
-                  <p class="balance-details">Total Billed: \${{ balance.totalBilled | number:'1.2-2' }}</p>
-                  <p class="balance-details">Paid: \${{ balance.totalPaid | number:'1.2-2' }}</p>
+                  <p class="balance-details">{{ 'billing.total' | translate }} {{ 'billing.billed' | translate }}: ₹{{ balance.totalBilled | number:'1.2-2' }}</p>
+                  <p class="balance-details">{{ 'common.paid' | translate }}: ₹{{ balance.totalPaid | number:'1.2-2' }}</p>
                 </div>
                 <div class="balance-amount outstanding">
-                  \${{ balance.remainingBalance | number:'1.2-2' }}
+                  ₹{{ balance.remainingBalance | number:'1.2-2' }}
                 </div>
               </div>
 
               <div *ngIf="topDebtors.length === 0" class="empty-state">
-                <p>All patients have paid their bills! 🎉</p>
+                <p>{{ 'dashboard.allPaid' | translate }} 🎉</p>
               </div>
             </div>
           </div>
 
           <div class="widget">
             <div class="widget-header">
-              <h3 class="widget-title">Alerts & Notifications</h3>
+              <h3 class="widget-title">{{ 'dashboard.alerts' | translate }}</h3>
             </div>
             <div class="alerts-list">
               <div *ngFor="let alert of alerts" class="alert-item" [class]="alert.type">
@@ -136,20 +137,20 @@ import { PatientBalance, PatientPaymentSummary } from '../../models/patient-bala
           
           <div class="widget">
             <div class="widget-header">
-              <h3 class="widget-title">Quick Actions</h3>
+              <h3 class="widget-title">{{ 'common.quickActions' | translate }}</h3>
             </div>
             <div class="quick-actions">
               <button routerLink="/patients" class="action-button primary">
                 <span class="action-icon">👤</span>
-                Add New Patient
+                {{ 'dashboard.addPatient' | translate }}
               </button>
               <button routerLink="/appointments" class="action-button secondary">
                 <span class="action-icon">📅</span>
-                Schedule Appointment
+                {{ 'dashboard.scheduleAppointment' | translate }}
               </button>
               <button routerLink="/billing" class="action-button tertiary">
                 <span class="action-icon">💳</span>
-                Generate Bill
+                {{ 'dashboard.createBill' | translate }}
               </button>
             </div>
           </div>

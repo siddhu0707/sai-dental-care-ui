@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HealthCheckService } from './services/health-check.service';
+import { TranslatePipe } from './pipes/translate.pipe';
+import { LanguageSwitcherComponent } from './components/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, TranslatePipe, LanguageSwitcherComponent],
   template: `
     <div class="app-container">
       <nav class="sidebar">
@@ -14,9 +16,12 @@ import { HealthCheckService } from './services/health-check.service';
           <div class="logo-container">
             <div class="logo">🦷</div>
             <div class="clinic-info">
-              <h2 class="clinic-name">Sai Dental Care</h2>
-              <p class="clinic-subtitle">Management System</p>
+              <h2 class="clinic-name">{{ 'clinic.name' | translate }}</h2>
+              <p class="clinic-subtitle">{{ 'clinic.subtitle' | translate }}</p>
             </div>
+          </div>
+          <div class="language-switcher-container">
+            <app-language-switcher></app-language-switcher>
           </div>
         </div>
         
@@ -24,25 +29,25 @@ import { HealthCheckService } from './services/health-check.service';
           <li>
             <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
               <span class="nav-icon">📊</span>
-              <span class="nav-text">Dashboard</span>
+              <span class="nav-text">{{ 'nav.dashboard' | translate }}</span>
             </a>
           </li>
           <li>
             <a routerLink="/patients" routerLinkActive="active" class="nav-item">
               <span class="nav-icon">👥</span>
-              <span class="nav-text">Patients</span>
+              <span class="nav-text">{{ 'nav.patients' | translate }}</span>
             </a>
           </li>
           <li>
             <a routerLink="/appointments" routerLinkActive="active" class="nav-item">
               <span class="nav-icon">📅</span>
-              <span class="nav-text">Appointments</span>
+              <span class="nav-text">{{ 'nav.appointments' | translate }}</span>
             </a>
           </li>
           <li>
             <a routerLink="/billing" routerLinkActive="active" class="nav-item">
               <span class="nav-icon">💰</span>
-              <span class="nav-text">Billing</span>
+              <span class="nav-text">{{ 'nav.billing' | translate }}</span>
             </a>
           </li>
         </ul>
@@ -82,6 +87,12 @@ import { HealthCheckService } from './services/health-check.service';
     .sidebar-header {
       padding: 1.5rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .language-switcher-container {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .logo-container {

@@ -5,34 +5,49 @@ import { AppointmentService } from '../../services/appointment.service';
 import { PatientService } from '../../services/patient.service';
 import { Appointment, CreateAppointmentRequest, AppointmentType, AppointmentStatus, TimeSlot } from '../../models/appointment.model';
 import { Patient } from '../../models/patient.model';
+import { TranslatePipe } from '../../pipes/translate.pipe';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'app-appointments',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
   template: `
     <div class="appointments-container">
       <header class="appointments-header">
         <div class="header-left">
-          <h1 class="page-title">Appointment Management</h1>
-          <p class="page-subtitle">Schedule and manage patient appointments</p>
+          <h1 class="page-title">{{ 'appointments.title' | translate }}</h1>
+          <p class="page-subtitle">{{ 'appointments.subtitle' | translate }}</p>
         </div>
         <div class="header-right">
           <button (click)="showScheduleModal = true" class="schedule-btn">
             <span class="btn-icon">📅</span>
-            Schedule Appointment
+            {{ 'appointments.schedule' | translate }}
           </button>
         </div>
       </header>
       
       <div class="appointments-tabs">
-        <button 
-          *ngFor="let tab of tabs" 
-          (click)="activeTab = tab.key"
-          [class.active]="activeTab === tab.key"
+        <button
+          (click)="activeTab = 'today'"
+          [class.active]="activeTab === 'today'"
           class="tab-button"
         >
-          {{ tab.label }}
+          {{ 'appointments.todaySchedule' | translate }}
+        </button>
+        <button
+          (click)="activeTab = 'all'"
+          [class.active]="activeTab === 'all'"
+          class="tab-button"
+        >
+          {{ 'appointments.allAppointments' | translate }}
+        </button>
+        <button
+          (click)="activeTab = 'calendar'"
+          [class.active]="activeTab === 'calendar'"
+          class="tab-button"
+        >
+          {{ 'appointments.calendarView' | translate }}
         </button>
       </div>
       
@@ -41,13 +56,13 @@ import { Patient } from '../../models/patient.model';
         <div *ngIf="activeTab === 'today'" class="tab-content">
           <div class="schedule-grid">
             <div class="time-column">
-              <div class="time-header">Time</div>
+              <div class="time-header">{{ 'common.time' | translate }}</div>
               <div *ngFor="let slot of todaySlots" class="time-slot">
                 {{ slot.time }}
               </div>
             </div>
             <div class="appointments-column">
-              <div class="appointments-header-cell">Today's Appointments</div>
+              <div class="appointments-header-cell">{{ 'appointments.todaySchedule' | translate }}</div>
               <div *ngFor="let slot of todaySlots" class="appointment-slot" [class.booked]="!slot.available">
                 <div *ngIf="!slot.available && slot.appointmentId" class="appointment-card">
                   <ng-container *ngFor="let appointment of todayAppointments">
@@ -59,20 +74,20 @@ import { Patient } from '../../models/patient.model';
                         {{ appointment.status | titlecase }}
                       </div>
                       <div class="appointment-actions">
-                        <button (click)="viewAppointment(appointment)" class="action-btn small">View</button>
-                        <button (click)="editAppointment(appointment)" class="action-btn small">Edit</button>
-                        <button *ngIf="appointment.status === 'scheduled'" 
-                                (click)="confirmAppointment(appointment.id)" 
-                                class="action-btn small confirm">Confirm</button>
-                        <button *ngIf="appointment.status === 'confirmed'" 
-                                (click)="markCompleted(appointment.id)" 
-                                class="action-btn small complete">Complete</button>
+                        <button (click)="viewAppointment(appointment)" class="action-btn small">{{ 'common.view' | translate }}</button>
+                        <button (click)="editAppointment(appointment)" class="action-btn small">{{ 'common.edit' | translate }}</button>
+                        <button *ngIf="appointment.status === 'scheduled'"
+                                (click)="confirmAppointment(appointment.id)"
+                                class="action-btn small confirm">{{ 'common.confirm' | translate }}</button>
+                        <button *ngIf="appointment.status === 'confirmed'"
+                                (click)="markCompleted(appointment.id)"
+                                class="action-btn small complete">{{ 'appointments.complete' | translate }}</button>
                       </div>
                     </div>
                   </ng-container>
                 </div>
                 <div *ngIf="slot.available" class="empty-slot">
-                  <span>Available</span>
+                  <span>{{ 'appointments.available' | translate }}</span>
                 </div>
               </div>
             </div>
@@ -83,27 +98,27 @@ import { Patient } from '../../models/patient.model';
         <div *ngIf="activeTab === 'all'" class="tab-content">
           <div class="appointments-controls">
             <div class="search-container">
-              <input 
-                type="text" 
-                placeholder="Search by patient name..."
+              <input
+                type="text"
+                [placeholder]="'appointments.searchByPatient' | translate"
                 [(ngModel)]="searchQuery"
                 (input)="filterAppointments()"
                 class="search-input"
               >
               <span class="search-icon">🔍</span>
             </div>
-            
+
             <div class="filter-container">
               <select [(ngModel)]="statusFilter" (change)="filterAppointments()" class="filter-select">
-                <option value="">All Statuses</option>
-                <option value="scheduled">Scheduled</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="">{{ 'appointments.allStatuses' | translate }}</option>
+                <option value="scheduled">{{ 'appointments.status.scheduled' | translate }}</option>
+                <option value="confirmed">{{ 'appointments.status.confirmed' | translate }}</option>
+                <option value="completed">{{ 'appointments.status.completed' | translate }}</option>
+                <option value="cancelled">{{ 'appointments.status.cancelled' | translate }}</option>
               </select>
-              
-              <input 
-                type="date" 
+
+              <input
+                type="date"
                 [(ngModel)]="dateFilter"
                 (change)="filterAppointments()"
                 class="date-filter"
@@ -127,7 +142,7 @@ import { Patient } from '../../models/patient.model';
               <div class="appointment-info">
                 <h3 class="patient-name">{{ appointment.patientName }}</h3>
                 <p class="appointment-type">{{ appointment.type }}</p>
-                <p class="doctor-name">��‍⚕️ {{ appointment.doctorName }}</p>
+                <p class="doctor-name">👨‍⚕️ {{ appointment.doctorName }}</p>
                 <p *ngIf="appointment.notes" class="appointment-notes">{{ appointment.notes }}</p>
               </div>
               
@@ -204,51 +219,51 @@ import { Patient } from '../../models/patient.model';
     <div *ngIf="showScheduleModal" class="modal-overlay" (click)="closeModal()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h2>{{ editingAppointment ? 'Edit Appointment' : 'Schedule New Appointment' }}</h2>
+          <h2>{{ editingAppointment ? ('appointments.editAppointment' | translate) : ('appointments.scheduleNew' | translate) }}</h2>
           <button (click)="closeModal()" class="close-btn">✕</button>
         </div>
-        
+
         <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="appointment-form">
           <div class="form-grid">
             <div class="form-group">
-              <label>Patient *</label>
+              <label>{{ 'appointments.patient' | translate }} *</label>
               <select formControlName="patientId" class="form-input">
-                <option value="">Select Patient</option>
+                <option value="">{{ 'appointments.selectPatient' | translate }}</option>
                 <option *ngFor="let patient of patients" [value]="patient.id">
                   {{ patient.firstName }} {{ patient.lastName }}
                 </option>
               </select>
-              <div *ngIf="appointmentForm.get('patientId')?.errors?.['required'] && appointmentForm.get('patientId')?.touched" 
-                   class="error-message">Patient is required</div>
+              <div *ngIf="appointmentForm.get('patientId')?.errors?.['required'] && appointmentForm.get('patientId')?.touched"
+                   class="error-message">{{ 'validation.patientRequired' | translate }}</div>
             </div>
-            
+
             <div class="form-group">
-              <label>Appointment Type *</label>
+              <label>{{ 'appointments.appointmentType' | translate }} *</label>
               <select formControlName="type" class="form-input">
-                <option value="">Select Type</option>
-                <option *ngFor="let type of appointmentTypes" [value]="type">{{ type }}</option>
+                <option value="">{{ 'appointments.selectType' | translate }}</option>
+                <option *ngFor="let type of appointmentTypes" [value]="type">{{ getAppointmentTypeTranslation(type) }}</option>
               </select>
-              <div *ngIf="appointmentForm.get('type')?.errors?.['required'] && appointmentForm.get('type')?.touched" 
-                   class="error-message">Appointment type is required</div>
+              <div *ngIf="appointmentForm.get('type')?.errors?.['required'] && appointmentForm.get('type')?.touched"
+                   class="error-message">{{ 'validation.appointmentTypeRequired' | translate }}</div>
             </div>
-            
+
             <div class="form-group">
-              <label>Date *</label>
+              <label>{{ 'common.date' | translate }} *</label>
               <input type="date" formControlName="appointmentDate" class="form-input" (change)="onDateChange()" />
-              <div *ngIf="appointmentForm.get('appointmentDate')?.errors?.['required'] && appointmentForm.get('appointmentDate')?.touched" 
-                   class="error-message">Date is required</div>
+              <div *ngIf="appointmentForm.get('appointmentDate')?.errors?.['required'] && appointmentForm.get('appointmentDate')?.touched"
+                   class="error-message">{{ 'validation.dateRequired' | translate }}</div>
             </div>
-            
+
             <div class="form-group">
-              <label>Time *</label>
+              <label>{{ 'common.time' | translate }} *</label>
               <select formControlName="startTime" class="form-input">
-                <option value="">Select Time</option>
+                <option value="">{{ 'appointments.selectTime' | translate }}</option>
                 <option *ngFor="let slot of availableSlots" [value]="slot.time" [disabled]="!slot.available">
-                  {{ slot.time }} {{ !slot.available ? '(Booked)' : '' }}
+                  {{ slot.time }} {{ !slot.available ? ('(' + ('appointments.booked' | translate) + ')') : '' }}
                 </option>
               </select>
-              <div *ngIf="appointmentForm.get('startTime')?.errors?.['required'] && appointmentForm.get('startTime')?.touched" 
-                   class="error-message">Time is required</div>
+              <div *ngIf="appointmentForm.get('startTime')?.errors?.['required'] && appointmentForm.get('startTime')?.touched"
+                   class="error-message">{{ 'validation.timeRequired' | translate }}</div>
             </div>
             
             <div class="form-group">
@@ -1145,7 +1160,8 @@ export class AppointmentsComponent implements OnInit {
   constructor(
     private appointmentService: AppointmentService,
     private patientService: PatientService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private translationService: TranslationService
   ) {
     this.appointmentForm = this.createAppointmentForm();
     this.initializeWeek();
@@ -1350,5 +1366,22 @@ export class AppointmentsComponent implements OnInit {
     return date1.getFullYear() === date2.getFullYear() &&
            date1.getMonth() === date2.getMonth() &&
            date1.getDate() === date2.getDate();
+  }
+
+  getAppointmentTypeTranslation(type: string): string {
+    const typeMap: { [key: string]: string } = {
+      'CLEANING': 'appointments.types.cleaning',
+      'CHECKUP': 'appointments.types.checkup',
+      'FILLING': 'appointments.types.filling',
+      'EXTRACTION': 'appointments.types.extraction',
+      'ROOT_CANAL': 'appointments.types.rootCanal',
+      'CROWN': 'appointments.types.crown',
+      'CONSULTATION': 'appointments.types.consultation',
+      'FOLLOW_UP': 'appointments.types.followUp',
+      'EMERGENCY': 'appointments.types.emergency'
+    };
+
+    const translationKey = typeMap[type] || type;
+    return this.translationService.translate(translationKey);
   }
 }

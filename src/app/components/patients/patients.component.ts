@@ -3,43 +3,44 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { PatientService } from '../../services/patient.service';
 import { Patient, CreatePatientRequest } from '../../models/patient.model';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
   template: `
     <div class="patients-container">
       <header class="patients-header">
         <div class="header-left">
-          <h1 class="page-title">Patient Management</h1>
-          <p class="page-subtitle">Manage patient records and information</p>
+          <h1 class="page-title">{{ 'patients.title' | translate }}</h1>
+          <p class="page-subtitle">{{ 'patients.subtitle' | translate }}</p>
         </div>
         <div class="header-right">
           <button (click)="showAddPatientModal = true" class="add-patient-btn">
             <span class="btn-icon">➕</span>
-            Add New Patient
+            {{ 'patients.addNew' | translate }}
           </button>
         </div>
       </header>
       
       <div class="patients-controls">
         <div class="search-container">
-          <input 
-            type="text" 
-            placeholder="Search patients by name, email, or phone..."
+          <input
+            type="text"
+            [placeholder]="'patients.searchPlaceholder' | translate"
             [(ngModel)]="searchQuery"
             (input)="onSearch()"
             class="search-input"
           >
           <span class="search-icon">🔍</span>
         </div>
-        
+
         <div class="filter-container">
           <select [(ngModel)]="sortBy" (change)="onSort()" class="sort-select">
-            <option value="name">Sort by Name</option>
-            <option value="date">Sort by Registration Date</option>
-            <option value="lastVisit">Sort by Last Visit</option>
+            <option value="name">{{ 'patients.sortByName' | translate }}</option>
+            <option value="date">{{ 'patients.sortByDate' | translate }}</option>
+            <option value="lastVisit">{{ 'patients.sortByLastVisit' | translate }}</option>
           </select>
         </div>
       </div>
@@ -54,23 +55,23 @@ import { Patient, CreatePatientRequest } from '../../models/patient.model';
             <p class="patient-contact">📧 {{ patient.email }}</p>
             <p class="patient-contact">📞 {{ patient.phone }}</p>
             <p class="patient-stats">
-              <span class="stat">Visits: {{ patient.totalVisits }}</span>
+              <span class="stat">{{ 'patients.totalVisits' | translate }}: {{ patient.totalVisits }}</span>
               <span class="stat" *ngIf="patient.lastVisit">
-                Last: {{ patient.lastVisit | date:'MMM d, y' }}
+                {{ 'patients.lastVisit' | translate }}: {{ patient.lastVisit | date:'MMM d, y' }}
               </span>
             </p>
           </div>
           <div class="patient-actions">
-            <button (click)="viewPatient(patient)" class="action-btn view">View</button>
-            <button (click)="editPatient(patient)" class="action-btn edit">Edit</button>
-            <button (click)="deletePatient(patient.id)" class="action-btn delete">Delete</button>
+            <button (click)="viewPatient(patient)" class="action-btn view">{{ 'common.view' | translate }}</button>
+            <button (click)="editPatient(patient)" class="action-btn edit">{{ 'common.edit' | translate }}</button>
+            <button (click)="deletePatient(patient.id)" class="action-btn delete">{{ 'common.delete' | translate }}</button>
           </div>
         </div>
         
         <div *ngIf="filteredPatients.length === 0" class="empty-state">
           <div class="empty-icon">👥</div>
-          <h3>No patients found</h3>
-          <p>{{ searchQuery ? 'Try adjusting your search criteria' : 'Start by adding your first patient' }}</p>
+          <h3>{{ 'patients.noPatients' | translate }}</h3>
+          <p>{{ searchQuery ? ('patients.adjustSearch' | translate) : ('patients.addFirstPatient' | translate) }}</p>
         </div>
       </div>
     </div>
@@ -79,130 +80,130 @@ import { Patient, CreatePatientRequest } from '../../models/patient.model';
     <div *ngIf="showAddPatientModal || showEditPatientModal" class="modal-overlay" (click)="closeModal()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h2>{{ showAddPatientModal ? 'Add New Patient' : 'Edit Patient' }}</h2>
+          <h2>{{ showAddPatientModal ? ('patients.addNew' | translate) : ('patients.editPatient' | translate) }}</h2>
           <button (click)="closeModal()" class="close-btn">✕</button>
         </div>
-        
+
         <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" class="patient-form">
           <div class="form-grid">
             <div class="form-group">
-              <label>First Name *</label>
+              <label>{{ 'patients.firstName' | translate }} *</label>
               <input type="text" formControlName="firstName" class="form-input" />
-              <div *ngIf="patientForm.get('firstName')?.errors?.['required'] && patientForm.get('firstName')?.touched" 
-                   class="error-message">First name is required</div>
+              <div *ngIf="patientForm.get('firstName')?.errors?.['required'] && patientForm.get('firstName')?.touched"
+                   class="error-message">{{ 'validation.firstNameRequired' | translate }}</div>
             </div>
-            
+
             <div class="form-group">
-              <label>Last Name *</label>
+              <label>{{ 'patients.lastName' | translate }} *</label>
               <input type="text" formControlName="lastName" class="form-input" />
-              <div *ngIf="patientForm.get('lastName')?.errors?.['required'] && patientForm.get('lastName')?.touched" 
-                   class="error-message">Last name is required</div>
+              <div *ngIf="patientForm.get('lastName')?.errors?.['required'] && patientForm.get('lastName')?.touched"
+                   class="error-message">{{ 'validation.lastNameRequired' | translate }}</div>
             </div>
-            
+
             <div class="form-group">
-              <label>Email *</label>
+              <label>{{ 'common.email' | translate }} *</label>
               <input type="email" formControlName="email" class="form-input" />
-              <div *ngIf="patientForm.get('email')?.errors?.['required'] && patientForm.get('email')?.touched" 
-                   class="error-message">Email is required</div>
-              <div *ngIf="patientForm.get('email')?.errors?.['email'] && patientForm.get('email')?.touched" 
-                   class="error-message">Please enter a valid email</div>
+              <div *ngIf="patientForm.get('email')?.errors?.['required'] && patientForm.get('email')?.touched"
+                   class="error-message">{{ 'validation.emailRequired' | translate }}</div>
+              <div *ngIf="patientForm.get('email')?.errors?.['email'] && patientForm.get('email')?.touched"
+                   class="error-message">{{ 'validation.emailValid' | translate }}</div>
             </div>
-            
+
             <div class="form-group">
-              <label>Phone *</label>
+              <label>{{ 'common.phone' | translate }} *</label>
               <input type="tel" formControlName="phone" class="form-input" />
-              <div *ngIf="patientForm.get('phone')?.errors?.['required'] && patientForm.get('phone')?.touched" 
-                   class="error-message">Phone is required</div>
+              <div *ngIf="patientForm.get('phone')?.errors?.['required'] && patientForm.get('phone')?.touched"
+                   class="error-message">{{ 'validation.phoneRequired' | translate }}</div>
             </div>
-            
+
             <div class="form-group">
-              <label>Date of Birth *</label>
+              <label>{{ 'patients.dateOfBirth' | translate }} *</label>
               <input type="date" formControlName="dateOfBirth" class="form-input" />
-              <div *ngIf="patientForm.get('dateOfBirth')?.errors?.['required'] && patientForm.get('dateOfBirth')?.touched" 
-                   class="error-message">Date of birth is required</div>
+              <div *ngIf="patientForm.get('dateOfBirth')?.errors?.['required'] && patientForm.get('dateOfBirth')?.touched"
+                   class="error-message">{{ 'validation.dateOfBirthRequired' | translate }}</div>
             </div>
           </div>
           
           <div class="form-section">
-            <h3>Address</h3>
+            <h3>{{ 'common.address' | translate }}</h3>
             <div formGroupName="address" class="form-grid">
               <div class="form-group full-width">
-                <label>Street Address</label>
+                <label>{{ 'patients.address.street' | translate }}</label>
                 <input type="text" formControlName="street" class="form-input" />
               </div>
-              
+
               <div class="form-group">
-                <label>City</label>
+                <label>{{ 'patients.address.city' | translate }}</label>
                 <input type="text" formControlName="city" class="form-input" />
               </div>
-              
+
               <div class="form-group">
-                <label>State</label>
+                <label>{{ 'patients.address.state' | translate }}</label>
                 <input type="text" formControlName="state" class="form-input" />
               </div>
-              
+
               <div class="form-group">
-                <label>ZIP Code</label>
+                <label>{{ 'patients.address.zipCode' | translate }}</label>
                 <input type="text" formControlName="zipCode" class="form-input" />
               </div>
             </div>
           </div>
           
           <div class="form-section">
-            <h3>Emergency Contact</h3>
+            <h3>{{ 'patients.emergencyContact' | translate }}</h3>
             <div formGroupName="emergencyContact" class="form-grid">
               <div class="form-group">
-                <label>Name</label>
+                <label>{{ 'common.name' | translate }}</label>
                 <input type="text" formControlName="name" class="form-input" />
               </div>
-              
+
               <div class="form-group">
-                <label>Phone</label>
+                <label>{{ 'common.phone' | translate }}</label>
                 <input type="tel" formControlName="phone" class="form-input" />
               </div>
-              
+
               <div class="form-group">
-                <label>Relationship</label>
+                <label>{{ 'patients.relationship' | translate }}</label>
                 <select formControlName="relationship" class="form-input">
-                  <option value="">Select relationship</option>
-                  <option value="Spouse">Spouse</option>
-                  <option value="Parent">Parent</option>
-                  <option value="Child">Child</option>
-                  <option value="Sibling">Sibling</option>
-                  <option value="Friend">Friend</option>
-                  <option value="Other">Other</option>
+                  <option value="">{{ 'patients.selectRelationship' | translate }}</option>
+                  <option value="Spouse">{{ 'patients.relationships.spouse' | translate }}</option>
+                  <option value="Parent">{{ 'patients.relationships.parent' | translate }}</option>
+                  <option value="Child">{{ 'patients.relationships.child' | translate }}</option>
+                  <option value="Sibling">{{ 'patients.relationships.sibling' | translate }}</option>
+                  <option value="Friend">{{ 'patients.relationships.friend' | translate }}</option>
+                  <option value="Other">{{ 'patients.relationships.other' | translate }}</option>
                 </select>
               </div>
             </div>
           </div>
           
           <div class="form-section">
-            <h3>Medical Information</h3>
+            <h3>{{ 'patients.medicalInfo' | translate }}</h3>
             <div class="form-group full-width">
-              <label>Medical History (comma-separated)</label>
-              <textarea formControlName="medicalHistory" class="form-textarea" 
-                       placeholder="e.g., Hypertension, Diabetes, Heart Disease"></textarea>
+              <label>{{ 'patients.medicalHistory' | translate }} ({{ 'patients.commaSeparated' | translate }})</label>
+              <textarea formControlName="medicalHistory" class="form-textarea"
+                       [placeholder]="'patients.medicalHistoryPlaceholder' | translate"></textarea>
             </div>
-            
+
             <div class="form-group full-width">
-              <label>Allergies (comma-separated)</label>
-              <textarea formControlName="allergies" class="form-textarea" 
-                       placeholder="e.g., Penicillin, Latex, Shellfish"></textarea>
+              <label>{{ 'patients.allergies' | translate }} ({{ 'patients.commaSeparated' | translate }})</label>
+              <textarea formControlName="allergies" class="form-textarea"
+                       [placeholder]="'patients.allergiesPlaceholder' | translate"></textarea>
             </div>
           </div>
-          
+
           <div class="form-section">
             <div class="form-group full-width">
-              <label>Notes</label>
-              <textarea formControlName="notes" class="form-textarea" 
-                       placeholder="Additional notes about the patient"></textarea>
+              <label>{{ 'common.notes' | translate }}</label>
+              <textarea formControlName="notes" class="form-textarea"
+                       [placeholder]="'patients.notesPlaceholder' | translate"></textarea>
             </div>
           </div>
-          
+
           <div class="form-actions">
-            <button type="button" (click)="closeModal()" class="btn secondary">Cancel</button>
+            <button type="button" (click)="closeModal()" class="btn secondary">{{ 'common.cancel' | translate }}</button>
             <button type="submit" [disabled]="patientForm.invalid" class="btn primary">
-              {{ showAddPatientModal ? 'Add Patient' : 'Update Patient' }}
+              {{ showAddPatientModal ? ('patients.addPatient' | translate) : ('patients.updatePatient' | translate) }}
             </button>
           </div>
         </form>
@@ -213,7 +214,7 @@ import { Patient, CreatePatientRequest } from '../../models/patient.model';
     <div *ngIf="showViewPatientModal" class="modal-overlay" (click)="closeModal()">
       <div class="modal-content large" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h2>Patient Details</h2>
+          <h2>{{ 'patients.patientDetails' | translate }}</h2>
           <button (click)="closeModal()" class="close-btn">✕</button>
         </div>
         
@@ -225,88 +226,88 @@ import { Patient, CreatePatientRequest } from '../../models/patient.model';
             <div class="patient-info">
               <h2>{{ selectedPatient.firstName }} {{ selectedPatient.lastName }}</h2>
               <p class="patient-meta">
-                Patient ID: {{ selectedPatient.id }} • 
-                Registered: {{ selectedPatient.registrationDate | date:'MMM d, y' }}
+                {{ 'patients.patientId' | translate }}: {{ selectedPatient.id }} •
+                {{ 'patients.registered' | translate }}: {{ selectedPatient.registrationDate | date:'MMM d, y' }}
               </p>
             </div>
           </div>
-          
+
           <div class="details-grid">
             <div class="detail-section">
-              <h3>Contact Information</h3>
+              <h3>{{ 'patients.contactInfo' | translate }}</h3>
               <div class="detail-item">
-                <strong>Email:</strong> {{ selectedPatient.email }}
+                <strong>{{ 'common.email' | translate }}:</strong> {{ selectedPatient.email }}
               </div>
               <div class="detail-item">
-                <strong>Phone:</strong> {{ selectedPatient.phone }}
+                <strong>{{ 'common.phone' | translate }}:</strong> {{ selectedPatient.phone }}
               </div>
               <div class="detail-item">
-                <strong>Date of Birth:</strong> {{ selectedPatient.dateOfBirth | date:'MMM d, y' }}
+                <strong>{{ 'patients.dateOfBirth' | translate }}:</strong> {{ selectedPatient.dateOfBirth | date:'MMM d, y' }}
               </div>
               <div class="detail-item">
-                <strong>Address:</strong><br>
+                <strong>{{ 'common.address' | translate }}:</strong><br>
                 {{ selectedPatient.address.street }}<br>
                 {{ selectedPatient.address.city }}, {{ selectedPatient.address.state }} {{ selectedPatient.address.zipCode }}
               </div>
             </div>
             
             <div class="detail-section">
-              <h3>Emergency Contact</h3>
+              <h3>{{ 'patients.emergencyContact' | translate }}</h3>
               <div class="detail-item">
-                <strong>Name:</strong> {{ selectedPatient.emergencyContact.name }}
+                <strong>{{ 'common.name' | translate }}:</strong> {{ selectedPatient.emergencyContact.name }}
               </div>
               <div class="detail-item">
-                <strong>Phone:</strong> {{ selectedPatient.emergencyContact.phone }}
+                <strong>{{ 'common.phone' | translate }}:</strong> {{ selectedPatient.emergencyContact.phone }}
               </div>
               <div class="detail-item">
-                <strong>Relationship:</strong> {{ selectedPatient.emergencyContact.relationship }}
+                <strong>{{ 'patients.relationship' | translate }}:</strong> {{ selectedPatient.emergencyContact.relationship }}
               </div>
             </div>
-            
+
             <div class="detail-section">
-              <h3>Medical Information</h3>
+              <h3>{{ 'patients.medicalInfo' | translate }}</h3>
               <div class="detail-item">
-                <strong>Medical History:</strong>
+                <strong>{{ 'patients.medicalHistory' | translate }}:</strong>
                 <ul *ngIf="selectedPatient.medicalHistory.length > 0; else noMedicalHistory">
                   <li *ngFor="let condition of selectedPatient.medicalHistory">{{ condition }}</li>
                 </ul>
                 <ng-template #noMedicalHistory>
-                  <span class="no-data">No medical history recorded</span>
+                  <span class="no-data">{{ 'patients.noMedicalHistory' | translate }}</span>
                 </ng-template>
               </div>
               <div class="detail-item">
-                <strong>Allergies:</strong>
+                <strong>{{ 'patients.allergies' | translate }}:</strong>
                 <ul *ngIf="selectedPatient.allergies.length > 0; else noAllergies">
                   <li *ngFor="let allergy of selectedPatient.allergies">{{ allergy }}</li>
                 </ul>
                 <ng-template #noAllergies>
-                  <span class="no-data">No allergies recorded</span>
+                  <span class="no-data">{{ 'patients.noAllergies' | translate }}</span>
                 </ng-template>
               </div>
             </div>
-            
+
             <div class="detail-section">
-              <h3>Visit Information</h3>
+              <h3>{{ 'patients.visitInfo' | translate }}</h3>
               <div class="detail-item">
-                <strong>Total Visits:</strong> {{ selectedPatient.totalVisits }}
+                <strong>{{ 'patients.totalVisits' | translate }}:</strong> {{ selectedPatient.totalVisits }}
               </div>
               <div class="detail-item">
-                <strong>Last Visit:</strong> 
+                <strong>{{ 'patients.lastVisit' | translate }}:</strong>
                 <span *ngIf="selectedPatient.lastVisit; else noLastVisit">
                   {{ selectedPatient.lastVisit | date:'MMM d, y' }}
                 </span>
                 <ng-template #noLastVisit>
-                  <span class="no-data">No visits recorded</span>
+                  <span class="no-data">{{ 'patients.noVisits' | translate }}</span>
                 </ng-template>
               </div>
               <div class="detail-item" *ngIf="selectedPatient.nextAppointment">
-                <strong>Next Appointment:</strong> {{ selectedPatient.nextAppointment | date:'MMM d, y' }}
+                <strong>{{ 'patients.nextAppointment' | translate }}:</strong> {{ selectedPatient.nextAppointment | date:'MMM d, y' }}
               </div>
             </div>
           </div>
-          
+
           <div *ngIf="selectedPatient.notes" class="notes-section">
-            <h3>Notes</h3>
+            <h3>{{ 'common.notes' | translate }}</h3>
             <p>{{ selectedPatient.notes }}</p>
           </div>
         </div>

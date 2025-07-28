@@ -9,22 +9,23 @@ import { Patient } from '../../models/patient.model';
 import { PatientBalance, PatientPaymentSummary } from '../../models/patient-balance.model';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-billing',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
   template: `
     <div class="billing-container">
       <header class="billing-header">
         <div class="header-left">
-          <h1 class="page-title">Billing & Payments</h1>
-          <p class="page-subtitle">Manage bills, payments, and invoices</p>
+          <h1 class="page-title">{{ 'billing.title' | translate }}</h1>
+          <p class="page-subtitle">{{ 'billing.subtitle' | translate }}</p>
         </div>
         <div class="header-right">
           <button (click)="showCreateBillModal = true" class="create-bill-btn">
             <span class="btn-icon">📄</span>
-            Create New Bill
+            {{ 'billing.createBill' | translate }}
           </button>
         </div>
       </header>
@@ -34,43 +35,63 @@ import html2canvas from 'html2canvas';
           <div class="stat-icon">💰</div>
           <div class="stat-content">
             <h3 class="stat-value">₹{{ monthlyRevenue | number:'1.2-2' }}</h3>
-            <p class="stat-label">Monthly Revenue</p>
+            <p class="stat-label">{{ 'billing.monthlyRevenue' | translate }}</p>
           </div>
         </div>
-        
+
         <div class="stat-card outstanding">
           <div class="stat-icon">⏰</div>
           <div class="stat-content">
             <h3 class="stat-value">₹{{ outstandingAmount | number:'1.2-2' }}</h3>
-            <p class="stat-label">Outstanding Amount</p>
+            <p class="stat-label">{{ 'billing.outstandingAmount' | translate }}</p>
           </div>
         </div>
-        
+
         <div class="stat-card pending">
           <div class="stat-icon">📋</div>
           <div class="stat-content">
             <h3 class="stat-value">{{ pendingBills.length }}</h3>
-            <p class="stat-label">Pending Bills</p>
+            <p class="stat-label">{{ 'billing.pendingBills' | translate }}</p>
           </div>
         </div>
-        
+
         <div class="stat-card overdue">
           <div class="stat-icon">⚠️</div>
           <div class="stat-content">
             <h3 class="stat-value">{{ overdueBills.length }}</h3>
-            <p class="stat-label">Overdue Bills</p>
+            <p class="stat-label">{{ 'billing.overdueBills' | translate }}</p>
           </div>
         </div>
       </div>
       
       <div class="billing-tabs">
-        <button 
-          *ngFor="let tab of tabs" 
-          (click)="activeTab = tab.key"
-          [class.active]="activeTab === tab.key"
+        <button
+          (click)="activeTab = 'bills'"
+          [class.active]="activeTab === 'bills'"
           class="tab-button"
         >
-          {{ tab.label }}
+          {{ 'billing.allBills' | translate }}
+        </button>
+        <button
+          (click)="activeTab = 'payments'"
+          [class.active]="activeTab === 'payments'"
+          class="tab-button"
+        >
+          {{ 'billing.payments' | translate }}
+        </button>
+        <button
+          (click)="activeTab = 'balances'"
+          [class.active]="activeTab === 'balances'"
+          class="tab-button"
+        >
+          {{ 'billing.patientBalances' | translate }}
+        </button>
+        <button
+          (click)="activeTab = 'templates'"
+          [class.active]="activeTab === 'templates'"
+          class="tab-button"
+        >
+          {{ 'billing.serviceTemplates' | translate }}
         </button>
       </div>
       
@@ -103,13 +124,13 @@ import html2canvas from 'html2canvas';
           
           <div class="bills-table">
             <div class="table-header">
-              <div class="header-cell">Bill Number</div>
-              <div class="header-cell">Patient</div>
-              <div class="header-cell">Issue Date</div>
-              <div class="header-cell">Due Date</div>
-              <div class="header-cell">Amount</div>
-              <div class="header-cell">Status</div>
-              <div class="header-cell">Actions</div>
+              <div class="header-cell">{{ 'billing.billNumber' | translate }}</div>
+              <div class="header-cell">{{ 'appointments.patient' | translate }}</div>
+              <div class="header-cell">{{ 'billing.issueDate' | translate }}</div>
+              <div class="header-cell">{{ 'billing.dueDate' | translate }}</div>
+              <div class="header-cell">{{ 'common.amount' | translate }}</div>
+              <div class="header-cell">{{ 'common.status' | translate }}</div>
+              <div class="header-cell">{{ 'common.actions' | translate }}</div>
             </div>
             
             <div *ngFor="let bill of filteredBills" class="table-row">
