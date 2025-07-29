@@ -356,6 +356,94 @@
       "updatedDate": "2023-12-21",
       "paymentMethod": "cash",
       "paymentDate": "2025-07-28T18:13:02.372Z"
+    },
+    {
+      "id": "a165",
+      "patientId": "patient_pazu89w8d",
+      "items": [
+        {
+          "description": "Dental Filling",
+          "category": "filling",
+          "quantity": 1,
+          "unitPrice": 3000,
+          "id": "item_gipkho9xu",
+          "total": 3000
+        },
+        {
+          "description": "Root Canal",
+          "category": "root_canal",
+          "quantity": 1,
+          "unitPrice": 5000,
+          "id": "item_3f1j5qm7m",
+          "total": 5000
+        }
+      ],
+      "discount": 800,
+      "notes": "",
+      "patientName": "Datta Bangar",
+      "billNumber": "INV-202507-579",
+      "issueDate": "2025-07-28T20:46:37.320Z",
+      "dueDate": "2025-08-27T20:46:37.320Z",
+      "subtotal": 8000,
+      "tax": 640,
+      "total": 7240,
+      "status": "sent",
+      "createdDate": "2025-07-28T20:46:37.320Z",
+      "updatedDate": "2025-07-28T20:46:37.320Z"
+    },
+    {
+      "id": "38df",
+      "patientId": "patient_001",
+      "items": [
+        {
+          "description": "Root Canal",
+          "category": "root_canal",
+          "quantity": 1,
+          "unitPrice": 12000,
+          "id": "item_dbpiv0cxp",
+          "total": 12000
+        }
+      ],
+      "discount": 300,
+      "notes": "",
+      "patientName": "Rajesh Kumar",
+      "billNumber": "INV-202507-013",
+      "issueDate": "2025-07-28T21:15:29.114Z",
+      "dueDate": "2025-08-27T21:15:29.114Z",
+      "subtotal": 12000,
+      "tax": 960,
+      "total": 12560,
+      "status": "sent",
+      "createdDate": "2025-07-28T21:15:29.114Z",
+      "updatedDate": "2025-07-28T21:15:29.114Z"
+    },
+    {
+      "id": "d2bc",
+      "patientId": "patient_1a2gx4kq1",
+      "items": [
+        {
+          "description": "Tooth Extraction",
+          "category": "extraction",
+          "quantity": 1,
+          "unitPrice": 4500,
+          "id": "item_b8vbaxy3y",
+          "total": 4500
+        }
+      ],
+      "discount": 200,
+      "notes": "",
+      "patientName": "Shinde pawar",
+      "billNumber": "INV-202507-831",
+      "issueDate": "2025-07-28T21:17:56.246Z",
+      "dueDate": "2025-08-27T21:17:56.246Z",
+      "subtotal": 4500,
+      "tax": 360,
+      "total": 4660,
+      "status": "paid",
+      "createdDate": "2025-07-28T21:17:56.246Z",
+      "updatedDate": "2025-07-28T21:17:56.246Z",
+      "paymentMethod": "credit_card",
+      "paymentDate": "2025-07-28T21:19:36.836Z"
     }
   ],
   "payments": [
@@ -375,6 +463,15 @@
       "method": "cash",
       "date": "2025-07-28T18:13:02.362Z",
       "reference": "PAY-NC05Q6BAD",
+      "notes": ""
+    },
+    {
+      "id": "1af2",
+      "billId": "d2bc",
+      "amount": 4660,
+      "method": "credit_card",
+      "date": "2025-07-28T21:19:36.819Z",
+      "reference": "PAY-RK9EAPR6R",
       "notes": ""
     }
   ],

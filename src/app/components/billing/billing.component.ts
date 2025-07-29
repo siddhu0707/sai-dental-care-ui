@@ -2026,7 +2026,7 @@ export class BillingComponent implements OnInit {
   onSubmitBill() {
     if (this.billForm.valid && this.billItems.length > 0) {
       const formData = this.billForm.value;
-
+      const patient: Patient[] = this.patients.filter(index => formData.patientId == index.id)
       const billData: CreateBillRequest = {
         patientId: formData.patientId,
         items: formData.items,
@@ -2038,13 +2038,15 @@ export class BillingComponent implements OnInit {
         // Convert CreateBillRequest to partial Bill format for update
         const updateData: Partial<Bill> = {
           patientId: billData.patientId,
+          patientName: patient[0].firstName + " " + patient[0].lastName,
           items: billData.items.map(item => ({
             ...item,
             id: 'item_' + Math.random().toString(36).substr(2, 9),
             total: item.quantity * item.unitPrice
           })),
           discount: billData.discount,
-          notes: billData.notes
+          notes: billData.notes,
+          total: this.editingBill.total + this.editingBill.discount - billData.discount
         };
         this.billingService.updateBill(this.editingBill.id, updateData).subscribe({
           next: (updatedBill) => {
