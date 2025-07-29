@@ -1,0 +1,57 @@
+<div class="app-container">
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo">🦷</div>
+        <div class="clinic-info">
+          <h2 class="clinic-name">{{ 'clinic.name' | translate }}</h2>
+          <p class="clinic-subtitle">{{ 'clinic.subtitle' | translate }}</p>
+        </div>
+      </div>
+      <div class="language-switcher-container">
+        <app-language-switcher></app-language-switcher>
+      </div>
+    </div>
+    
+    <ul class="nav-menu">
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">{{ 'nav.dashboard' | translate }}</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/patients" routerLinkActive="active" class="nav-item">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">{{ 'nav.patients' | translate }}</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/appointments" routerLinkActive="active" class="nav-item">
+          <span class="nav-icon">📅</span>
+          <span class="nav-text">{{ 'nav.appointments' | translate }}</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/billing" routerLinkActive="active" class="nav-item">
+          <span class="nav-icon">💰</span>
+          <span class="nav-text">{{ 'nav.billing' | translate }}</span>
+        </a>
+      </li>
+    </ul>
+    
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">👨‍⚕️</div>
+        <div class="user-details">
+          <p class="user-name">Dr. Smith</p>
+          <p class="user-role">Administrator</p>
+        </div>
+      </div>
+    </div>
+  </nav>
+  
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

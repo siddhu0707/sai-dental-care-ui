@@ -1,0 +1,1026 @@
+.billing-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.billing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.page-subtitle {
+    margin: 0.5rem 0 0 0;
+    color: #6b7280;
+    font-size: 1rem;
+}
+
+.create-bill-btn {
+    background: #0ea5e9;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s ease;
+}
+
+.create-bill-btn:hover {
+    background: #0284c7;
+}
+
+.btn-icon {
+    margin-right: 0.5rem;
+}
+
+.billing-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-right: 1rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-card.revenue .stat-icon {
+    background: #dcfce7;
+}
+
+.stat-card.outstanding .stat-icon {
+    background: #fef3c7;
+}
+
+.stat-card.pending .stat-icon {
+    background: #dbeafe;
+}
+
+.stat-card.overdue .stat-icon {
+    background: #fee2e2;
+}
+
+.stat-value {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.stat-label {
+    margin: 0.25rem 0 0 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.billing-tabs {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 2rem;
+}
+
+.tab-button {
+    padding: 1rem 1.5rem;
+    border: none;
+    background: none;
+    color: #6b7280;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+    color: #374151;
+}
+
+.tab-button.active {
+    color: #0ea5e9;
+    border-bottom-color: #0ea5e9;
+}
+
+.bills-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    align-items: center;
+}
+
+.search-container {
+    flex: 1;
+    position: relative;
+}
+
+.search-input {
+    width: 93%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+}
+
+.filter-select {
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+}
+
+.bills-table {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 150px 200px 120px 120px 120px 120px 200px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.header-cell {
+    padding: 1rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 150px 200px 120px 120px 120px 120px 200px;
+    border-bottom: 1px solid #e5e7eb;
+    transition: background 0.2s ease;
+}
+
+.table-row:hover {
+    background: #f9fafb;
+}
+
+.table-cell {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.status-badge.draft {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.status-badge.sent {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.status-badge.paid {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.status-badge.overdue {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.status-badge.cancelled {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.status-badge.large {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: 0.375rem 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn.view {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.action-btn.edit {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.action-btn.send {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.action-btn.pay {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.action-btn.download {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.action-btn:hover {
+    opacity: 0.8;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6b7280;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.payments-list h3 {
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+}
+
+.payment-item {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.payment-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1f2937;
+}
+
+.payment-info p {
+    margin: 0.25rem 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.payment-details {
+    text-align: right;
+}
+
+.payment-amount {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #16a34a;
+}
+
+.payment-method {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.payment-date {
+    color: #9ca3af;
+    font-size: 0.8rem;
+}
+
+.templates-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.templates-header h3 {
+    margin: 0;
+    color: #1f2937;
+}
+
+.add-template-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.templates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.template-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+
+.template-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.template-header h4 {
+    margin: 0;
+    color: #1f2937;
+}
+
+.template-category {
+    background: #e5e7eb;
+    color: #374151;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.template-description {
+    color: #6b7280;
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
+}
+
+.template-price {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #16a34a;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 2rem;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content.large {
+    max-width: 900px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 0.25rem;
+}
+
+.close-btn:hover {
+    color: #374151;
+}
+
+.bill-form,
+.payment-form,
+.template-form {
+    padding: 1.5rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.add-item-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-input,
+.form-textarea {
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.form-textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.items-list {
+    margin-top: 1rem;
+}
+
+.item-row {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.item-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 80px 120px 120px 80px;
+    gap: 1rem;
+    align-items: end;
+}
+
+.total-display {
+    padding: 0.75rem;
+    background: #e5e7eb;
+    border-radius: 6px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.remove-item-btn {
+    background: #fee2e2;
+    color: #dc2626;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.bill-summary {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.summary-row.total {
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-top: 1px solid #d1d5db;
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn.primary {
+    background: #0ea5e9;
+    color: white;
+    border: none;
+}
+
+.btn.primary:hover:not(:disabled) {
+    background: #0284c7;
+}
+
+.btn.primary:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.btn.secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn.secondary:hover {
+    background: #e5e7eb;
+}
+
+.bill-details {
+    padding: 1.5rem;
+}
+
+.bill-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.clinic-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+    border-radius: 12px;
+    color: white;
+}
+
+.logo-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.clinic-name {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.clinic-tagline {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+    font-style: italic;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 4px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.contact-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-left-color: #0ea5e9;
+}
+
+.contact-item.address {
+    border-left-color: #f59e0b;
+}
+
+.contact-item.phone {
+    border-left-color: #10b981;
+}
+
+.contact-item.email {
+    border-left-color: #3b82f6;
+}
+
+.contact-item.doctor {
+    border-left-color: #8b5cf6;
+}
+
+.contact-icon {
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.contact-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.contact-value {
+    font-size: 0.9rem;
+    color: #1f2937;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.contact-value.clickable {
+    color: #0ea5e9;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.contact-value.clickable:hover {
+    color: #0284c7;
+    text-decoration: underline;
+}
+
+.reg-number {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+.bill-info {
+    text-align: right;
+}
+
+.bill-info h2 {
+    margin: 0 0 0.5rem 0;
+    color: #1f2937;
+}
+
+.bill-info p {
+    margin: 0.25rem 0;
+    color: #6b7280;
+}
+
+.patient-info {
+    margin-bottom: 2rem;
+}
+
+.patient-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #374151;
+}
+
+.patient-info p {
+    margin: 0;
+    color: #1f2937;
+}
+
+.bill-items-table {
+    margin-bottom: 2rem;
+}
+
+.items-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 80px 120px 120px;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px 8px 0 0;
+    font-weight: 600;
+    color: #374151;
+}
+
+.items-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 80px 120px 120px;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.bill-totals {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.totals-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.totals-row.total {
+    font-size: 1.25rem;
+    border-top: 1px solid #d1d5db;
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.bill-notes {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.bill-notes h4 {
+    margin: 0 0 0.5rem 0;
+    color: #374151;
+}
+
+.bill-notes p {
+    margin: 0;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.bill-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.balances-summary {
+    margin-bottom: 2rem;
+}
+
+.summary-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.summary-card h3 {
+    margin: 0 0 1rem 0;
+    color: #374151;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.summary-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.summary-amount.outstanding {
+    color: #dc2626;
+}
+
+.summary-count {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0ea5e9;
+}
+
+.patient-balances-list {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.balances-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.balances-header h3 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.balances-table .table-header {
+    grid-template-columns: 200px 120px 120px 120px 120px 180px;
+}
+
+.balances-table .table-row {
+    grid-template-columns: 200px 120px 120px 120px 120px 180px;
+}
+
+.balance-amount.outstanding {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.no-data {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.action-btn.primary {
+    background: #0ea5e9;
+    color: white;
+}
+
+.action-btn.primary:hover {
+    background: #0284c7;
+}
+
+@media (max-width: 1024px) {
+
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .table-cell {
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .header-cell {
+        display: none;
+    }
+
+    .table-cell:before {
+        content: attr(data-label);
+        font-weight: 600;
+        display: inline-block;
+        width: 120px;
+        color: #374151;
+    }
+}
+
+@media (max-width: 768px) {
+    .billing-container {
+        padding: 1rem;
+    }
+
+    .billing-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .billing-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .bills-controls {
+        flex-direction: column;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .item-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .modal-overlay {
+        padding: 1rem;
+    }
+
+    .bill-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .bill-info {
+        text-align: left;
+    }
+
+    .items-header,
+    .items-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}

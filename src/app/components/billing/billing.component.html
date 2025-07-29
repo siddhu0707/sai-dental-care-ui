@@ -1,0 +1,579 @@
+<div class="billing-container">
+    <header class="billing-header">
+        <div class="header-left">
+            <h1 class="page-title">{{ 'billing.title' | translate }}</h1>
+            <p class="page-subtitle">{{ 'billing.subtitle' | translate }}</p>
+        </div>
+        <div class="header-right">
+            <button (click)="showCreateBillModal = true" class="create-bill-btn">
+                <span class="btn-icon">📄</span>
+                {{ 'billing.createBill' | translate }}
+            </button>
+        </div>
+    </header>
+
+    <div class="billing-stats">
+        <div class="stat-card revenue">
+            <div class="stat-icon">💰</div>
+            <div class="stat-content">
+                <h3 class="stat-value">₹{{ monthlyRevenue | number:'1.2-2' }}</h3>
+                <p class="stat-label">{{ 'billing.monthlyRevenue' | translate }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card outstanding">
+            <div class="stat-icon">⏰</div>
+            <div class="stat-content">
+                <h3 class="stat-value">₹{{ outstandingAmount | number:'1.2-2' }}</h3>
+                <p class="stat-label">{{ 'billing.outstandingAmount' | translate }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card pending">
+            <div class="stat-icon">📋</div>
+            <div class="stat-content">
+                <h3 class="stat-value">{{ pendingBills.length }}</h3>
+                <p class="stat-label">{{ 'billing.pendingBills' | translate }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card overdue">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-content">
+                <h3 class="stat-value">{{ overdueBills.length }}</h3>
+                <p class="stat-label">{{ 'billing.overdueBills' | translate }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="billing-tabs">
+        <button (click)="activeTab = 'bills'" [class.active]="activeTab === 'bills'" class="tab-button">
+            {{ 'billing.allBills' | translate }}
+        </button>
+        <button (click)="activeTab = 'payments'" [class.active]="activeTab === 'payments'" class="tab-button">
+            {{ 'billing.payments' | translate }}
+        </button>
+        <button (click)="activeTab = 'balances'" [class.active]="activeTab === 'balances'" class="tab-button">
+            {{ 'billing.patientBalances' | translate }}
+        </button>
+        <button (click)="activeTab = 'templates'" [class.active]="activeTab === 'templates'" class="tab-button">
+            {{ 'billing.serviceTemplates' | translate }}
+        </button>
+    </div>
+
+    <div class="billing-content">
+        <!-- All Bills Tab -->
+        <div *ngIf="activeTab === 'bills'" class="tab-content">
+            <div class="bills-controls">
+                <div class="search-container">
+                    <input type="text" placeholder="Search by patient name or bill number..." [(ngModel)]="searchQuery"
+                        (input)="filterBills()" class="search-input">
+                    <span class="search-icon">🔍</span>
+                </div>
+
+                <div class="filter-container">
+                    <select [(ngModel)]="statusFilter" (change)="filterBills()" class="filter-select">
+                        <option value="">All Statuses</option>
+                        <option value="draft">Draft</option>
+                        <option value="sent">Sent</option>
+                        <option value="paid">Paid</option>
+                        <option value="overdue">Overdue</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bills-table">
+                <div class="table-header">
+                    <div class="header-cell">{{ 'billing.billNumber' | translate }}</div>
+                    <div class="header-cell">{{ 'appointments.patient' | translate }}</div>
+                    <div class="header-cell">{{ 'billing.issueDate' | translate }}</div>
+                    <div class="header-cell">{{ 'billing.dueDate' | translate }}</div>
+                    <div class="header-cell">{{ 'common.amount' | translate }}</div>
+                    <div class="header-cell">{{ 'common.status' | translate }}</div>
+                    <div class="header-cell">{{ 'common.actions' | translate }}</div>
+                </div>
+
+                <div *ngFor="let bill of filteredBills" class="table-row">
+                    <div class="table-cell">
+                        <strong>{{ bill.billNumber }}</strong>
+                    </div>
+                    <div class="table-cell">{{ bill.patientName }}</div>
+                    <div class="table-cell">{{ bill.issueDate | date:'MMM d, y' }}</div>
+                    <div class="table-cell">{{ bill.dueDate | date:'MMM d, y' }}</div>
+                    <div class="table-cell">
+                        <strong>₹{{ bill.total | number:'1.2-2' }}</strong>
+                    </div>
+                    <div class="table-cell">
+                        <span class="status-badge" [class]="bill.status">
+                            {{ bill.status | titlecase }}
+                        </span>
+                    </div>
+                    <div class="table-cell">
+                        <div class="action-buttons">
+                            <button (click)="viewBill(bill)" class="action-btn view">View</button>
+                            <button *ngIf="bill.status === 'draft'" (click)="editBill(bill)"
+                                class="action-btn edit">Edit</button>
+                            <button *ngIf="bill.status === 'draft'" (click)="sendBill(bill.id)"
+                                class="action-btn send">Send</button>
+                            <button *ngIf="bill.status === 'sent' || bill.status === 'overdue'"
+                                (click)="markAsPaid(bill)" class="action-btn pay">Mark Paid</button>
+                            <button (click)="downloadBill(bill)" class="action-btn download">Download</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="filteredBills.length === 0" class="empty-state">
+                    <div class="empty-icon">📄</div>
+                    <h3>No bills found</h3>
+                    <p>{{ searchQuery || statusFilter ? 'Try adjusting your search criteria' : 'Create your first bill'
+                        }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payments Tab -->
+        <div *ngIf="activeTab === 'payments'" class="tab-content">
+            <div class="payments-list">
+                <h3>Recent Payments</h3>
+                <div class="payment-item" *ngFor="let payment of payments">
+                    <div class="payment-info">
+                        <h4>{{ getBillByPayment(payment.billId)?.patientName }}</h4>
+                        <p>Bill: {{ getBillByPayment(payment.billId)?.billNumber }}</p>
+                        <p>Reference: {{ payment.reference }}</p>
+                    </div>
+                    <div class="payment-details">
+                        <div class="payment-amount">₹{{ payment.amount | number:'1.2-2' }}</div>
+                        <div class="payment-method">{{ payment.method | titlecase }}</div>
+                        <div class="payment-date">{{ payment.date | date:'MMM d, y' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Balances Tab -->
+        <div *ngIf="activeTab === 'balances'" class="tab-content">
+            <div class="balances-summary">
+                <div class="summary-stats">
+                    <div class="summary-card">
+                        <h3>Total Outstanding</h3>
+                        <div class="summary-amount outstanding">
+                            ₹{{ getTotalOutstandingAmount() | number:'1.2-2' }}
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Patients with Balance</h3>
+                        <div class="summary-count">
+                            {{ getPatientsWithBalanceCount() }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="patient-balances-list">
+                <div class="balances-header">
+                    <h3>Patient Outstanding Balances</h3>
+                </div>
+
+                <div class="balances-table">
+                    <div class="table-header">
+                        <div class="header-cell">Patient</div>
+                        <div class="header-cell">Total Billed</div>
+                        <div class="header-cell">Total Paid</div>
+                        <div class="header-cell">Remaining</div>
+                        <div class="header-cell">Last Payment</div>
+                        <div class="header-cell">Actions</div>
+                    </div>
+
+                    <div *ngFor="let balance of getPatientsWithBalance()" class="table-row">
+                        <div class="table-cell">
+                            <strong>{{ balance.patientName }}</strong>
+                        </div>
+                        <div class="table-cell">
+                            ₹{{ balance.totalBilled | number:'1.2-2' }}
+                        </div>
+                        <div class="table-cell">
+                            ₹{{ balance.totalPaid | number:'1.2-2' }}
+                        </div>
+                        <div class="table-cell">
+                            <span class="balance-amount outstanding">
+                                ₹{{ balance.remainingBalance | number:'1.2-2' }}
+                            </span>
+                        </div>
+                        <div class="table-cell">
+                            <span *ngIf="balance.lastPaymentDate; else noPayment">
+                                {{ balance.lastPaymentDate | date:'MMM d, y' }}
+                            </span>
+                            <ng-template #noPayment>
+                                <span class="no-data">No payments</span>
+                            </ng-template>
+                        </div>
+                        <div class="table-cell">
+                            <button (click)="viewPatientBills(balance.patientId)" class="action-btn view">
+                                View Bills
+                            </button>
+                            <button (click)="createPaymentPlan(balance)" class="action-btn primary">
+                                Payment Plan
+                            </button>
+                        </div>
+                    </div>
+
+                    <div *ngIf="getPatientsWithBalanceCount() === 0" class="empty-state">
+                        <div class="empty-icon">💳</div>
+                        <h3>All Paid Up!</h3>
+                        <p>All patients have cleared their outstanding balances.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Templates Tab -->
+        <div *ngIf="activeTab === 'templates'" class="tab-content">
+            <div class="templates-header">
+                <h3>Service Templates</h3>
+                <button (click)="showTemplateModal = true" class="add-template-btn">
+                    Add Template
+                </button>
+            </div>
+
+            <div class="templates-grid">
+                <div *ngFor="let template of serviceTemplates" class="template-card">
+                    <div class="template-header">
+                        <h4>{{ template.name }}</h4>
+                        <span class="template-category">{{ template.category | titlecase }}</span>
+                    </div>
+                    <p class="template-description">{{ template.description }}</p>
+                    <div class="template-price">₹{{ template.defaultPrice | number:'1.2-2' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create/Edit Bill Modal -->
+<div *ngIf="showCreateBillModal || showEditBillModal" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content large" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>{{ showCreateBillModal ? 'Create New Bill' : 'Edit Bill' }}</h2>
+            <button (click)="closeModal()" class="close-btn">✕</button>
+        </div>
+
+        <form [formGroup]="billForm" (ngSubmit)="onSubmitBill()" class="bill-form">
+            <div class="form-section">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Patient *</label>
+                        <select formControlName="patientId" class="form-input">
+                            <option value="">Select Patient</option>
+                            <option *ngFor="let patient of patients" [value]="patient.id">
+                                {{ patient.firstName }} {{ patient.lastName }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Discount (₹)</label>
+                        <input type="number" formControlName="discount" class="form-input" min="0" step="0.01" />
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Notes</label>
+                    <textarea formControlName="notes" class="form-textarea"
+                        placeholder="Additional notes for this bill"></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-header">
+                    <h3>Bill Items</h3>
+                    <button type="button" (click)="addBillItem()" class="add-item-btn">
+                        Add Item
+                    </button>
+                </div>
+
+                <div formArrayName="items" class="items-list">
+                    <div *ngFor="let item of billItems.controls; let i = index" [formGroupName]="i" class="item-row">
+                        <div class="item-grid">
+                            <div class="form-group">
+                                <label>Service</label>
+                                <select formControlName="description" (change)="onServiceSelect(i)" class="form-input">
+                                    <option value="">Select Service</option>
+                                    <option *ngFor="let template of serviceTemplates" [value]="template.name">
+                                        {{ template.name }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select formControlName="category" class="form-input">
+                                    <option *ngFor="let category of serviceCategories" [value]="category">
+                                        {{ category | titlecase }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Quantity</label>
+                                <input type="number" formControlName="quantity" class="form-input" min="1"
+                                    (input)="calculateItemTotal(i)" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Unit Price (₹)</label>
+                                <input type="number" formControlName="unitPrice" class="form-input" min="0" step="0.01"
+                                    (input)="calculateItemTotal(i)" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Total</label>
+                                <div class="total-display">₹{{ getItemTotal(i) | number:'1.2-2' }}</div>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="button" (click)="removeBillItem(i)" class="remove-item-btn">
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bill-summary">
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span>₹{{ calculateSubtotal() | number:'1.2-2' }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Tax (8%):</span>
+                    <span>₹{{ calculateTax() | number:'1.2-2' }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Discount:</span>
+                    <span>-₹{{ billForm.get('discount')?.value || 0 | number:'1.2-2' }}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span>₹{{ calculateTotal() | number:'1.2-2' }}</span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" (click)="closeModal()" class="btn secondary">Cancel</button>
+                <button type="submit" [disabled]="billForm.invalid || billItems.length === 0" class="btn primary">
+                    {{ showCreateBillModal ? 'Create Bill' : 'Update Bill' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- View Bill Modal -->
+<div *ngIf="showViewBillModal" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content large" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Bill Details</h2>
+            <button (click)="closeModal()" class="close-btn">✕</button>
+        </div>
+
+        <div *ngIf="selectedBill" class="bill-details">
+            <div class="bill-header">
+                <div class="clinic-info">
+                    <div class="clinic-logo">
+                        <div class="logo-icon">🦷</div>
+                        <div class="clinic-details">
+                            <h3 class="clinic-name">{{ 'clinic.name' | translate }}</h3>
+                            <p class="clinic-tagline">{{ 'clinic.tagline' | translate }}</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-grid">
+                        <div class="contact-item address">
+                            <div class="contact-icon">📍</div>
+                            <div class="contact-details">
+                                <span class="contact-label">{{ 'common.address' | translate }}</span>
+                                <span class="contact-value">{{ 'clinic.address' | translate }}</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-item phone">
+                            <div class="contact-icon">📞</div>
+                            <div class="contact-details">
+                                <span class="contact-label">{{ 'common.phone' | translate }}</span>
+                                <a href="tel:{{ 'clinic.phone' | translate }}" class="contact-value clickable">{{
+                                    'clinic.phone' | translate }}</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-item email">
+                            <div class="contact-icon">✉️</div>
+                            <div class="contact-details">
+                                <span class="contact-label">{{ 'common.email' | translate }}</span>
+                                <a href="mailto:{{ 'clinic.email' | translate }}" class="contact-value clickable">{{
+                                    'clinic.email' | translate }}</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-item doctor">
+                            <div class="contact-icon">👨‍⚕️</div>
+                            <div class="contact-details">
+                                <span class="contact-label">{{ 'appointments.doctor' | translate }}</span>
+                                <span class="contact-value">{{ 'clinic.doctor' | translate }}</span>
+                                <span class="reg-number">{{ 'clinic.regNoLabel' | translate }}: {{ 'clinic.regNo' |
+                                    translate }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bill-info">
+                    <h2>{{ selectedBill.billNumber }}</h2>
+                    <p><strong>{{ 'billing.issueDate' | translate }}:</strong> {{ selectedBill.issueDate |
+                        date:'fullDate' }}</p>
+                    <p><strong>{{ 'billing.dueDate' | translate }}:</strong> {{ selectedBill.dueDate | date:'fullDate'
+                        }}</p>
+                    <div class="status-badge large" [class]="selectedBill.status">
+                        {{ getBillStatusTranslation(selectedBill.status) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="patient-info">
+                <h4>Bill To:</h4>
+                <p><strong>{{ selectedBill.patientName }}</strong></p>
+            </div>
+
+            <div class="bill-items-table">
+                <div class="items-header">
+                    <div>Description</div>
+                    <div>Category</div>
+                    <div>Qty</div>
+                    <div>Unit Price</div>
+                    <div>Total</div>
+                </div>
+
+                <div *ngFor="let item of selectedBill.items" class="items-row">
+                    <div>{{ item.description }}</div>
+                    <div>{{ item.category | titlecase }}</div>
+                    <div>{{ item.quantity }}</div>
+                    <div>₹{{ item.unitPrice | number:'1.2-2' }}</div>
+                    <div>₹{{ item.total | number:'1.2-2' }}</div>
+                </div>
+            </div>
+
+            <div class="bill-totals">
+                <div class="totals-row">
+                    <span>Subtotal:</span>
+                    <span>₹{{ selectedBill.subtotal | number:'1.2-2' }}</span>
+                </div>
+                <div class="totals-row">
+                    <span>Tax:</span>
+                    <span>₹{{ selectedBill.tax | number:'1.2-2' }}</span>
+                </div>
+                <div *ngIf="selectedBill.discount > 0" class="totals-row">
+                    <span>Discount:</span>
+                    <span>-₹{{ selectedBill.discount | number:'1.2-2' }}</span>
+                </div>
+                <div class="totals-row total">
+                    <strong>Total: ₹{{ selectedBill.total | number:'1.2-2' }}</strong>
+                </div>
+            </div>
+
+            <div *ngIf="selectedBill.notes" class="bill-notes">
+                <h4>Notes:</h4>
+                <p>{{ selectedBill.notes }}</p>
+            </div>
+
+            <div class="bill-actions">
+                <button (click)="downloadBill(selectedBill)" class="btn secondary">Download PDF</button>
+                <button *ngIf="selectedBill.status === 'sent' || selectedBill.status === 'overdue'"
+                    (click)="markAsPaid(selectedBill)" class="btn primary">Mark as Paid</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div *ngIf="showPaymentModal" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Record Payment</h2>
+            <button (click)="closeModal()" class="close-btn">✕</button>
+        </div>
+
+        <form [formGroup]="paymentForm" (ngSubmit)="onSubmitPayment()" class="payment-form">
+            <div class="form-group">
+                <label>Amount (₹) *</label>
+                <input type="number" formControlName="amount" class="form-input" [max]="selectedBill?.total || 0"
+                    min="0" step="0.01" />
+                <small *ngIf="selectedBill">Total bill amount: ₹{{ selectedBill.total | number:'1.2-2' }}</small>
+            </div>
+
+            <div class="form-group">
+                <label>Payment Method *</label>
+                <select formControlName="method" class="form-input">
+                    <option value="">Select Payment Method</option>
+                    <option value="cash">Cash</option>
+                    <option value="credit_card">Credit Card</option>
+                    <option value="debit_card">Debit Card</option>
+                    <option value="check">Check</option>
+                    <option value="insurance">Insurance</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" (click)="closeModal()" class="btn secondary">Cancel</button>
+                <button type="submit" [disabled]="paymentForm.invalid" class="btn primary">
+                    Record Payment
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Service Template Modal -->
+<div *ngIf="showTemplateModal" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Add Service Template</h2>
+            <button (click)="closeModal()" class="close-btn">✕</button>
+        </div>
+
+        <form [formGroup]="templateForm" (ngSubmit)="onSubmitTemplate()" class="template-form">
+            <div class="form-group">
+                <label>Service Name *</label>
+                <input type="text" formControlName="name" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label>Category *</label>
+                <select formControlName="category" class="form-input">
+                    <option value="">Select Category</option>
+                    <option *ngFor="let category of serviceCategories" [value]="category">
+                        {{ category | titlecase }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Default Price (₹) *</label>
+                <input type="number" formControlName="defaultPrice" class="form-input" min="0" step="0.01" />
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea formControlName="description" class="form-textarea"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" (click)="closeModal()" class="btn secondary">Cancel</button>
+                <button type="submit" [disabled]="templateForm.invalid" class="btn primary">
+                    Add Template
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
