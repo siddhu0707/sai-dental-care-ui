@@ -14,9 +14,13 @@ export const routes: Routes = [
     path: 'appointments', 
     loadComponent: () => import('./components/appointments/appointments.component').then(m => m.AppointmentsComponent)
   },
-  { 
-    path: 'billing', 
+  {
+    path: 'billing',
     loadComponent: () => import('./components/billing/billing.component').then(m => m.BillingComponent)
+  },
+  {
+    path: 'prescription',
+    loadComponent: () => import('./components/prescription/prescription.component').then(m => m.PrescriptionComponent)
   },
   { path: '**', redirectTo: '/dashboard' }
 ];

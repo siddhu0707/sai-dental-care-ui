@@ -1,0 +1,340 @@
+<!-- Main Container -->
+<div class="prescription-container">
+  <!-- Header -->
+  <header class="prescription-header">
+    <div class="header-left">
+      <h1 class="page-title">Prescription</h1>
+      <p class="page-subtitle">Create and manage digital prescriptions</p>
+    </div>
+    <div class="header-right">
+      <button (click)="previewPrescription()"
+              class="preview-btn"
+              [class.disabled]="!canPreview()">
+        <span class="btn-icon">👁️</span>
+        Preview Prescription
+      </button>
+      <button (click)="resetForm()" class="reset-btn">
+        <span class="btn-icon">🔄</span>
+        Reset Form
+      </button>
+    </div>
+  </header>
+
+  <!-- Prescription Form -->
+  <div class="prescription-form-container">
+    <form [formGroup]="prescriptionForm" class="prescription-form">
+      
+      <!-- Patient Selection -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <span class="section-icon">👤</span>
+          Patient Information
+          <span *ngIf="selectedPatient" class="validation-check">✅</span>
+        </h3>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Select Patient *</label>
+            <select formControlName="patientId" (change)="onPatientSelect()" class="form-input">
+              <option value="">Choose a patient...</option>
+              <option *ngFor="let patient of patients" [value]="patient.id">
+                {{ patient.firstName }} {{ patient.lastName }} - {{ patient.phone }}
+              </option>
+            </select>
+          </div>
+          
+          <!-- Patient Details Display -->
+          <div *ngIf="selectedPatient" class="patient-details">
+            <div class="patient-card">
+              <div class="patient-avatar">
+                {{ selectedPatient.firstName.charAt(0) }}{{ selectedPatient.lastName.charAt(0) }}
+              </div>
+              <div class="patient-info">
+                <h4>{{ selectedPatient.firstName }} {{ selectedPatient.lastName }}</h4>
+                <p><strong>Phone:</strong> {{ selectedPatient.phone }}</p>
+                <p><strong>Email:</strong> {{ selectedPatient.email }}</p>
+                <p><strong>Date of Birth:</strong> {{ selectedPatient.dateOfBirth | date:'dd/MM/yyyy' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagnosis Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <span class="section-icon">🔍</span>
+          Diagnosis
+          <span *ngIf="prescriptionForm.get('diagnosis')?.value?.trim()" class="validation-check">✅</span>
+        </h3>
+        <div class="form-group">
+          <label>Diagnosis *</label>
+          <textarea formControlName="diagnosis" 
+                   class="form-textarea"
+                   rows="3"
+                   placeholder="Enter patient diagnosis..."></textarea>
+        </div>
+      </div>
+
+      <!-- Prescription Items -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <span class="section-icon">💊</span>
+          Prescription
+          <button type="button" (click)="addPrescriptionItem()" class="add-item-btn">
+            <span class="btn-icon">➕</span>
+            Add Medicine
+          </button>
+        </h3>
+        
+        <div formArrayName="prescriptionItems" class="prescription-items">
+          <div *ngFor="let item of prescriptionItems.controls; let i = index" 
+               [formGroupName]="i" 
+               class="prescription-item">
+            <div class="item-header">
+              <span class="item-number">{{ i + 1 }}</span>
+              <button type="button" 
+                      (click)="removePrescriptionItem(i)"
+                      [disabled]="prescriptionItems.length <= 1"
+                      class="remove-item-btn">
+                <span class="btn-icon">❌</span>
+              </button>
+            </div>
+            
+            <div class="item-grid">
+              <div class="form-group">
+                <label>Medicine / Treatment *</label>
+                <select formControlName="medicine" class="form-input" (change)="onMedicineChange(i, $event)">
+                  <option value="">Select Medicine...</option>
+                  <option *ngFor="let medicine of commonMedicines" [value]="medicine.name + ' - ' + medicine.strength">
+                    {{ medicine.name }} - {{ medicine.strength }}
+                  </option>
+                  <option value="custom">+ Add Custom Medicine</option>
+                </select>
+                <input *ngIf="isCustomMedicine(i)"
+                       type="text"
+                       class="form-input custom-medicine"
+                       placeholder="Enter custom medicine name"
+                       [value]="getCustomMedicineValue(i)"
+                       (input)="setCustomMedicine(i, $event)"
+                       style="margin-top: 0.5rem;">
+              </div>
+              
+              <div class="form-group">
+                <label>Dosage *</label>
+                <input type="text" 
+                       formControlName="dosage" 
+                       class="form-input"
+                       placeholder="e.g., 1 tablet">
+              </div>
+              
+              <div class="form-group">
+                <label>Duration *</label>
+                <input type="text" 
+                       formControlName="duration" 
+                       class="form-input"
+                       placeholder="e.g., 5 days">
+              </div>
+              
+              <div class="form-group full-width">
+                <label>Instructions</label>
+                <input type="text" 
+                       formControlName="instructions" 
+                       class="form-input"
+                       placeholder="e.g., Take after meals">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <span class="section-icon">📝</span>
+          Notes & Instructions
+        </h3>
+        <div class="form-group">
+          <label>Additional Notes</label>
+          <textarea formControlName="notes" 
+                   class="form-textarea"
+                   rows="3"
+                   placeholder="Any additional instructions for the patient..."></textarea>
+        </div>
+      </div>
+
+      <!-- Follow-up Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <span class="section-icon">📅</span>
+          Follow-up
+        </h3>
+        <div class="form-group">
+          <label>Next Visit Date</label>
+          <input type="date" formControlName="nextVisitDate" class="form-input">
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- Prescription Preview Modal -->
+<div *ngIf="showPreview" class="modal-overlay" (click)="closePreview()">
+  <div class="modal-content prescription-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Prescription Preview</h2>
+      <div class="modal-actions">
+        <button (click)="printPrescription()" class="print-btn">
+          <span class="btn-icon">🖨️</span>
+          Print
+        </button>
+        <button (click)="generatePDF()"
+                [disabled]="isGeneratingPDF"
+                class="generate-pdf-btn">
+          <span class="btn-icon">📄</span>
+          {{ isGeneratingPDF ? 'Generating...' : 'Download PDF' }}
+        </button>
+        <button (click)="closePreview()" class="close-btn">✕</button>
+      </div>
+    </div>
+    
+    <!-- PDF Preview Content -->
+    <div class="modal-body">
+      <div id="prescription-preview" class="prescription-preview">
+        
+        <!-- Header Section -->
+        <div class="prescription-header-section">
+          <div class="clinic-logo-section">
+            <div class="logo-placeholder">
+              <div class="tooth-icon">🦷</div>
+            </div>
+            <div class="clinic-info">
+              <h1 class="clinic-name">{{ currentPrescription.clinicName }}</h1>
+              <div class="doctor-info">
+                <h2 class="doctor-name">{{ currentPrescription.doctorName }}</h2>
+                <p class="doctor-title">Dental Surgeon</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="clinic-contact">
+            <div class="address">
+              <p><strong>📍 Address:</strong></p>
+              <p>Chattrapati Shivaji Maharaj Chowk,</p>
+              <p>Nere-Dattawadi, Mulshi,</p>
+              <p>Pune - 411057</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Patient Information -->
+        <div class="patient-section">
+          <h3 class="section-header">
+            <span class="section-icon">👤</span>
+            Patient Information
+          </h3>
+          <div class="patient-details-grid">
+            <div class="detail-item">
+              <strong>Name:</strong> {{ currentPrescription.patientName }}
+            </div>
+            <div class="detail-item">
+              <strong>Age / Gender:</strong> {{ currentPrescription.patientAge }} years / {{ currentPrescription.patientGender }}
+            </div>
+            <div class="detail-item">
+              <strong>Mobile:</strong> {{ currentPrescription.patientMobile }}
+            </div>
+            <div class="detail-item">
+              <strong>Date:</strong> {{ formatDate(currentPrescription.date) }}
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Diagnosis Section -->
+        <div class="diagnosis-section">
+          <h3 class="section-header">
+            <span class="section-icon">🔍</span>
+            Diagnosis
+          </h3>
+          <div class="diagnosis-content">
+            {{ currentPrescription.diagnosis }}
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Prescription Section -->
+        <div class="prescription-section">
+          <h3 class="section-header">
+            <span class="section-icon">℞</span>
+            Prescription
+          </h3>
+          <div class="prescription-items">
+            <div *ngFor="let item of currentPrescription.prescriptionItems; let i = index" 
+                 class="prescription-item-display">
+              <div class="item-number">{{ i + 1 }}.</div>
+              <div class="item-details">
+                <div class="medicine-name">{{ item.medicine }}</div>
+                <div class="medicine-details">
+                  <span class="dosage">{{ item.dosage }}</span>
+                  <span class="duration">for {{ item.duration }}</span>
+                  <span *ngIf="item.instructions" class="instructions">- {{ item.instructions }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Notes Section -->
+        <div *ngIf="currentPrescription.notes" class="notes-section">
+          <h3 class="section-header">
+            <span class="section-icon">📝</span>
+            Notes & Instructions
+          </h3>
+          <div class="notes-content">
+            {{ currentPrescription.notes }}
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Follow-up Section -->
+        <div class="followup-section">
+          <h3 class="section-header">
+            <span class="section-icon">📅</span>
+            Follow-up
+          </h3>
+          <div class="followup-content">
+            <strong>Next Visit Date:</strong> 
+            <span *ngIf="currentPrescription.nextVisitDate; else noDate">
+              {{ formatDate(currentPrescription.nextVisitDate) }}
+            </span>
+            <ng-template #noDate>
+              <span class="underline">_________________</span>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="prescription-footer">
+          <div class="watermark">
+            <div class="tooth-watermark">🦷</div>
+          </div>
+          <div class="signature-section">
+            <div class="signature-line">
+              <div class="signature-placeholder"></div>
+              <p class="signature-label">{{ currentPrescription.doctorName }}</p>
+              <p class="signature-title">Digital Signature</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

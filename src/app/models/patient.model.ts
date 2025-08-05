@@ -5,6 +5,7 @@ export interface Patient {
   email: string;
   phone: string;
   dateOfBirth: Date;
+  gender?: string;
   address: {
     street: string;
     city: string;
@@ -31,6 +32,7 @@ export interface CreatePatientRequest {
   email: string;
   phone: string;
   dateOfBirth: Date;
+  gender?: string;
   address: {
     street: string;
     city: string;
