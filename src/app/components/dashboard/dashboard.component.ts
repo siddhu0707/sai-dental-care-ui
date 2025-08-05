@@ -10,12 +10,13 @@ import { Patient } from '../../models/patient.model';
 import { Appointment } from '../../models/appointment.model';
 import { Bill } from '../../models/billing.model';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { BackendTestComponent } from '../backend-test/backend-test.component';
 import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, RouterLink, TranslatePipe, BackendTestComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })

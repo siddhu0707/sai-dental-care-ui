@@ -51,19 +51,23 @@ export class PatientService {
   addPatient(patientData: CreatePatientRequest): Observable<Patient> {
     const newPatient: any = {
       ...patientData,
-      id: this.generateId(),
-      registrationDate: new Date().toISOString(),
       totalVisits: 0,
       notes: patientData.notes || ''
     };
 
+    console.log('Creating patient:', newPatient);
+
     return this.apiService.createPatient(newPatient).pipe(
-      tap(() => this.loadPatients()),
+      tap((patient) => {
+        console.log('Patient created successfully:', patient);
+        this.loadPatients();
+      }),
       catchError(error => {
         console.error('Error adding patient:', error);
         // Fallback to local addition if API fails
         const localPatient: Patient = {
           ...newPatient,
+          id: this.generateId(),
           registrationDate: new Date(),
           dateOfBirth: new Date(newPatient.dateOfBirth)
         };

@@ -8,7 +8,11 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "json-server": "json-server --watch db.json --port 3001 --host 0.0.0.0",
-    "dev": "concurrently \"npm run json-server\" \"ng serve\""
+    "dev": "concurrently \"npm run json-server\" \"ng serve\"",
+    "dev-backend": "concurrently \"cd backend && mvn spring-boot:run\" \"ng serve --host 0.0.0.0\"",
+    "backend": "cd backend && mvn spring-boot:run",
+    "backend-build": "cd backend && mvn clean compile",
+    "start-full": "npm run dev-backend"
   },
   "private": true,
   "dependencies": {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { Patient } from '../models/patient.model';
 import { Appointment } from '../models/appointment.model';
 import { Bill, Payment, ServiceTemplate } from '../models/billing.model';
@@ -9,7 +10,7 @@ import { Bill, Payment, ServiceTemplate } from '../models/billing.model';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:3001';
+  private baseUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) {}
 
@@ -23,7 +24,19 @@ export class ApiService {
   }
 
   createPatient(patient: any): Observable<Patient> {
-    return this.http.post<Patient>(`${this.baseUrl}/patients`, patient);
+    console.log('API Service: Creating patient with data:', patient);
+    console.log('API Service: Making POST request to:', `${this.baseUrl}/patients`);
+
+    return this.http.post<Patient>(`${this.baseUrl}/patients`, patient).pipe(
+      tap(response => console.log('API Service: Patient created successfully:', response)),
+      catchError(error => {
+        console.error('API Service: Error creating patient:', error);
+        console.error('API Service: Error status:', error.status);
+        console.error('API Service: Error message:', error.message);
+        console.error('API Service: Full error object:', error);
+        throw error;
+      })
+    );
   }
 
   updatePatient(id: string, patient: Partial<Patient>): Observable<Patient> {
