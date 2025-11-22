@@ -185,6 +185,37 @@
   background: #fecaca;
 }
 
+.action-btn.whatsapp {
+  background: #25d366;
+  color: white;
+  font-size: 14px;
+  min-width: auto;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.action-btn.whatsapp:hover {
+  background: #128c7e;
+}
+
+.action-btn.welcome {
+  background: #007bff;
+  color: white;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.action-btn.welcome:hover {
+  background: #0056b3;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .empty-state {
   grid-column: 1 / -1;
   text-align: center;

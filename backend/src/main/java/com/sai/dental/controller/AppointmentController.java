@@ -89,8 +89,9 @@ public class AppointmentController {
         return appointmentService.getAppointmentsByStatus(status);
     }
 
-    @PostMapping("/{id}/send-reminder")
-    public ResponseEntity<Appointment> sendReminder(@PathVariable Long id) {
+    @GetMapping("/send-reminder")
+    public ResponseEntity<Appointment> sendReminder() {
+    	Long id =null;
         try {
             Appointment appointment = appointmentService.sendReminder(id);
             return ResponseEntity.ok(appointment);

@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, F
 import { BillingService } from '../../services/billing.service';
 import { PatientService } from '../../services/patient.service';
 import { PatientBalanceService } from '../../services/patient-balance.service';
+import { WhatsAppService } from '../../services/whatsapp.service';
 import { Bill, CreateBillRequest, BillStatus, PaymentMethod, ServiceTemplate, ServiceCategory, BillItem, Payment } from '../../models/billing.model';
 import { Patient } from '../../models/patient.model';
 import { PatientBalance, PatientPaymentSummary } from '../../models/patient-balance.model';
@@ -65,6 +66,7 @@ export class BillingComponent implements OnInit {
     private billingService: BillingService,
     private patientService: PatientService,
     private patientBalanceService: PatientBalanceService,
+    private whatsAppService: WhatsAppService,
     private fb: FormBuilder,
     private translationService: TranslationService
   ) {
@@ -456,6 +458,13 @@ export class BillingComponent implements OnInit {
         this.billingService.createBill(billData).subscribe({
           next: (newBill) => {
             console.log('Bill created successfully');
+
+            // Send WhatsApp bill notification
+            const patient = this.patients.find(p => p.id === newBill.patientId.toString());
+            if (patient && this.whatsAppService.isValidPhoneNumber(patient.phone)) {
+              this.whatsAppService.sendBillNotification(patient, newBill);
+            }
+
             this.closeModal();
           },
           error: (error) => {
@@ -473,6 +482,15 @@ export class BillingComponent implements OnInit {
         next: (success) => {
           if (success) {
             console.log('Payment recorded successfully');
+
+            // Send WhatsApp payment confirmation
+            if (this.selectedBill) {
+              const patient = this.patients.find(p => p.id === this.selectedBill?.patientId.toString());
+              if (patient && this.whatsAppService.isValidPhoneNumber(patient.phone)) {
+                this.whatsAppService.sendPaymentConfirmation(patient, this.selectedBill, formData.amount);
+              }
+            }
+
             this.closeModal();
           } else {
             console.error('Failed to record payment');

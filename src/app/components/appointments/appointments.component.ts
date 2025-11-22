@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppointmentService } from '../../services/appointment.service';
 import { PatientService } from '../../services/patient.service';
+import { WhatsAppService } from '../../services/whatsapp.service';
 import { Appointment, CreateAppointmentRequest, AppointmentType, AppointmentStatus, TimeSlot } from '../../models/appointment.model';
 import { Patient } from '../../models/patient.model';
 import { TranslatePipe } from '../../pipes/translate.pipe';
@@ -60,6 +61,7 @@ export class AppointmentsComponent implements OnInit {
   constructor(
     private appointmentService: AppointmentService,
     private patientService: PatientService,
+    private whatsAppService: WhatsAppService,
     private fb: FormBuilder,
     private translationService: TranslationService
   ) {
@@ -187,6 +189,24 @@ export class AppointmentsComponent implements OnInit {
 
   sendReminder(id: string) {
     this.appointmentService.sendReminder(id);
+
+    // Send WhatsApp reminder
+    const appointment = this.appointments.find(a => a.id === id);
+    if (appointment) {
+      const patient = this.patients.find(p => p.id === appointment.patientId.toString());
+      if (patient && this.whatsAppService.isValidPhoneNumber(patient.phone)) {
+        this.whatsAppService.sendAppointmentReminder(patient, appointment);
+      }
+    }
+  }
+
+  sendWhatsAppConfirmation(appointment: Appointment) {
+    const patient = this.patients.find(p => p.id === appointment.patientId.toString());
+    if (patient && this.whatsAppService.isValidPhoneNumber(patient.phone)) {
+      this.whatsAppService.sendAppointmentConfirmation(patient, appointment);
+    } else {
+      alert('Invalid patient phone number');
+    }
   }
 
   onSubmit() {
@@ -201,7 +221,13 @@ export class AppointmentsComponent implements OnInit {
       if (this.editingAppointment) {
         this.appointmentService.updateAppointment(this.editingAppointment.id, appointmentData).subscribe();
       } else {
-        this.appointmentService.createAppointment(appointmentData).subscribe();
+        this.appointmentService.createAppointment(appointmentData).subscribe((newAppointment) => {
+          // Send WhatsApp confirmation for new appointments
+          const patient = this.patients.find(p => p.id === newAppointment.patientId.toString());
+          if (patient && this.whatsAppService.isValidPhoneNumber(patient.phone)) {
+            this.whatsAppService.sendAppointmentConfirmation(patient, newAppointment);
+          }
+        });
       }
 
       this.closeModal();

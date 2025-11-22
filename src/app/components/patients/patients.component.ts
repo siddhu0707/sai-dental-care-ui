@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { PatientService } from '../../services/patient.service';
+import { WhatsAppService } from '../../services/whatsapp.service';
 import { Patient, CreatePatientRequest } from '../../models/patient.model';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
@@ -27,6 +28,7 @@ export class PatientsComponent implements OnInit {
 
   constructor(
     private patientService: PatientService,
+    private whatsAppService: WhatsAppService,
     private fb: FormBuilder
   ) {
     this.patientForm = this.createPatientForm();
@@ -46,6 +48,7 @@ export class PatientsComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       phone: ['', Validators.required],
       dateOfBirth: ['', Validators.required],
+      gender: [''],
       address: this.fb.group({
         street: [''],
         city: [''],
@@ -123,6 +126,7 @@ export class PatientsComponent implements OnInit {
       email: patient.email,
       phone: patient.phone,
       dateOfBirth: patient.dateOfBirth.toISOString().split('T')[0],
+      gender: patient.gender || '',
       address: patient.address,
       emergencyContact: patient.emergencyContact,
       medicalHistory: patient.medicalHistory.join(', '),
@@ -143,7 +147,11 @@ export class PatientsComponent implements OnInit {
       };
 
       if (this.showAddPatientModal) {
-        this.patientService.addPatient(patientData).subscribe(() => {
+        this.patientService.addPatient(patientData).subscribe((newPatient) => {
+          // Send welcome message to new patient
+          if (newPatient && this.whatsAppService.isValidPhoneNumber(newPatient.phone)) {
+            this.whatsAppService.sendWelcomeMessage(newPatient);
+          }
           this.closeModal();
         });
       } else if (this.showEditPatientModal && this.selectedPatient) {
@@ -161,5 +169,26 @@ export class PatientsComponent implements OnInit {
     this.selectedPatient = null;
     this.patientForm.reset();
     this.patientForm = this.createPatientForm();
+  }
+
+  sendWhatsAppMessage(patient: Patient) {
+    if (!this.whatsAppService.isValidPhoneNumber(patient.phone)) {
+      alert('Invalid phone number format. Please check the patient\'s phone number.');
+      return;
+    }
+
+    const message = prompt('Enter message to send:');
+    if (message) {
+      this.whatsAppService.sendCustomMessage(patient, message);
+    }
+  }
+
+  sendWelcomeMessage(patient: Patient) {
+    if (!this.whatsAppService.isValidPhoneNumber(patient.phone)) {
+      alert('Invalid phone number format. Please check the patient\'s phone number.');
+      return;
+    }
+
+    this.whatsAppService.sendWelcomeMessage(patient);
   }
 }

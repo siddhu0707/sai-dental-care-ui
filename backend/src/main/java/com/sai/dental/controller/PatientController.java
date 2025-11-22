@@ -17,6 +17,23 @@ public class PatientController {
     @Autowired
     private PatientService patientService;
 
+    @GetMapping("/test")
+    public String testEndpoint() {
+        System.out.println("Test endpoint called - Controller is working!");
+        return "Controller is working!";
+    }
+
+    @PostMapping("/simple")
+    public ResponseEntity<String> createSimplePatient(@RequestBody String data) {
+        try {
+            System.out.println("POST /api/patients/simple called with data: " + data);
+            return ResponseEntity.ok("Simple POST is working! Received: " + data);
+        } catch (Exception e) {
+            System.err.println("Error in simple POST: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
     @GetMapping
     public List<Patient> getAllPatients() {
         return patientService.getAllPatients();
@@ -30,12 +47,19 @@ public class PatientController {
     }
 
     @PostMapping
-    public Patient createPatient(@Valid @RequestBody Patient patient) {
-        System.out.println("Creating patient: " + patient.getFirstName() + " " + patient.getLastName());
-        System.out.println("Patient data: " + patient);
-        Patient savedPatient = patientService.savePatient(patient);
-        System.out.println("Patient saved with ID: " + savedPatient.getId());
-        return savedPatient;
+    public ResponseEntity<Patient> createPatient(@Valid @RequestBody Patient patient) {
+        try {
+            System.out.println("POST /api/patients called");
+            System.out.println("Creating patient: " + patient.getFirstName() + " " + patient.getLastName());
+            System.out.println("Patient data: " + patient);
+            Patient savedPatient = patientService.savePatient(patient);
+            System.out.println("Patient saved with ID: " + savedPatient.getId());
+            return ResponseEntity.ok(savedPatient);
+        } catch (Exception e) {
+            System.err.println("Error creating patient: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}")

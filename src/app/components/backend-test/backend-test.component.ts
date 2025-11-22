@@ -52,9 +52,55 @@ export class BackendTestComponent {
 
   runTests() {
     this.testResults = [];
+    this.testBasicConnection();
+    this.testPatientControllerTest();
     this.testBackendConnection();
     this.testPatientsEndpoint();
     this.testCreatePatient();
+  }
+
+  private testBasicConnection() {
+    console.log('Testing basic backend connection...');
+    this.http.get('http://localhost:8080/api/test', { responseType: 'text' }).subscribe({
+      next: (data) => {
+        console.log('Basic backend connection successful:', data);
+        this.testResults.push({
+          test: 'Basic Backend Connection',
+          message: `Success - ${data}`,
+          status: 'success'
+        });
+      },
+      error: (error) => {
+        console.error('Basic backend connection failed:', error);
+        this.testResults.push({
+          test: 'Basic Backend Connection',
+          message: `Failed - ${error.status}: ${error.message}`,
+          status: 'error'
+        });
+      }
+    });
+  }
+
+  private testPatientControllerTest() {
+    console.log('Testing patient controller...');
+    this.http.get('http://localhost:8080/api/patients/test', { responseType: 'text' }).subscribe({
+      next: (data) => {
+        console.log('Patient controller test successful:', data);
+        this.testResults.push({
+          test: 'Patient Controller Test',
+          message: `Success - ${data}`,
+          status: 'success'
+        });
+      },
+      error: (error) => {
+        console.error('Patient controller test failed:', error);
+        this.testResults.push({
+          test: 'Patient Controller Test',
+          message: `Failed - ${error.status}: ${error.message}`,
+          status: 'error'
+        });
+      }
+    });
   }
 
   private testBackendConnection() {

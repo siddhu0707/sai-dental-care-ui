@@ -52,6 +52,7 @@
       <div class="patient-actions">
         <button (click)="viewPatient(patient)" class="action-btn view">{{ 'common.view' | translate }}</button>
         <button (click)="editPatient(patient)" class="action-btn edit">{{ 'common.edit' | translate }}</button>
+        <button (click)="sendWhatsAppMessage(patient)" class="action-btn whatsapp" title="Send WhatsApp Message">📱</button>
         <button (click)="deletePatient(patient.id)" class="action-btn delete">{{ 'common.delete' | translate }}</button>
       </div>
     </div>
@@ -109,6 +110,16 @@
           <input type="date" formControlName="dateOfBirth" class="form-input" />
           <div *ngIf="patientForm.get('dateOfBirth')?.errors?.['required'] && patientForm.get('dateOfBirth')?.touched"
                class="error-message">{{ 'validation.dateOfBirthRequired' | translate }}</div>
+        </div>
+
+        <div class="form-group">
+          <label>{{ 'patients.gender' | translate }}</label>
+          <select formControlName="gender" class="form-input">
+            <option value="">{{ 'patients.selectGender' | translate }}</option>
+            <option value="Male">{{ 'patients.gender.male' | translate }}</option>
+            <option value="Female">{{ 'patients.gender.female' | translate }}</option>
+            <option value="Other">{{ 'patients.gender.other' | translate }}</option>
+          </select>
         </div>
       </div>
       
@@ -203,7 +214,15 @@
   <div class="modal-content large" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h2>{{ 'patients.patientDetails' | translate }}</h2>
-      <button (click)="closeModal()" class="close-btn">✕</button>
+      <div class="header-actions">
+        <button (click)="sendWhatsAppMessage(selectedPatient!)" class="action-btn whatsapp" title="Send WhatsApp Message">
+          📱 {{ 'patients.sendMessage' | translate }}
+        </button>
+        <button (click)="sendWelcomeMessage(selectedPatient!)" class="action-btn welcome" title="Send Welcome Message">
+          👋 {{ 'patients.sendWelcome' | translate }}
+        </button>
+        <button (click)="closeModal()" class="close-btn">✕</button>
+      </div>
     </div>
     
     <div *ngIf="selectedPatient" class="patient-details">
@@ -231,6 +250,9 @@
           </div>
           <div class="detail-item">
             <strong>{{ 'patients.dateOfBirth' | translate }}:</strong> {{ selectedPatient.dateOfBirth | date:'MMM d, y' }}
+          </div>
+          <div class="detail-item" *ngIf="selectedPatient.gender">
+            <strong>{{ 'patients.gender' | translate }}:</strong> {{ selectedPatient.gender }}
           </div>
           <div class="detail-item">
             <strong>{{ 'common.address' | translate }}:</strong><br>
