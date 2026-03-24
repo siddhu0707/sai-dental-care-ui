@@ -17,6 +17,7 @@ import { TranslationService } from '../../services/translation.service';
   styleUrls: ['./appointments.component.css']
 })
 export class AppointmentsComponent implements OnInit {
+  public AppointmentStatus = AppointmentStatus;
   activeTab = 'today';
   tabs = [
     { key: 'today', label: "Today's Schedule" },
@@ -212,10 +213,22 @@ export class AppointmentsComponent implements OnInit {
   onSubmit() {
     if (this.appointmentForm.valid) {
       const formData = this.appointmentForm.value;
+      const selectedPatient = this.patients.find(p => String(p.id) === String(formData.patientId));
+      const patientName = selectedPatient ? `${selectedPatient.firstName} ${selectedPatient.lastName}` : '';
 
-      const appointmentData: CreateAppointmentRequest = {
+      // Debug log
+      console.log('Selected patient:', selectedPatient);
+      console.log('Resolved patientName:', patientName);
+
+      if (!patientName || patientName.trim() === '') {
+        alert('Patient name could not be resolved. Please select a valid patient.');
+        return;
+      }
+
+      const appointmentData: any = {
         ...formData,
-        appointmentDate: new Date(formData.appointmentDate)
+        appointmentDate: new Date(formData.appointmentDate),
+        patientName
       };
 
       if (this.editingAppointment) {
@@ -413,5 +426,10 @@ export class AppointmentsComponent implements OnInit {
   // Helper method to format custom reminder message with appointment details
   formatReminderMessage(baseMessage: string, appointment: Appointment): string {
     return `${baseMessage}\n\nAppointment Details:\n📅 Date: ${appointment.appointmentDate.toLocaleDateString()}\n🕐 Time: ${appointment.startTime}\n🏥 Type: ${appointment.type}\n👨‍⚕️ Doctor: ${appointment.doctorName}`;
+  }
+
+  getPatientName(patientId: string): string {
+    const patient = this.patients.find(p => p.id === patientId);
+    return patient ? `${patient.firstName} ${patient.lastName}` : 'Unknown Patient';
   }
 }

@@ -19,30 +19,31 @@ export interface Appointment {
 }
 
 export enum AppointmentType {
-  CONSULTATION = 'Consultation',
-  CLEANING = 'Routine Cleaning',
-  FILLING = 'Dental Filling',
-  EXTRACTION = 'Tooth Extraction',
-  ROOT_CANAL = 'Root Canal',
-  CROWN = 'Crown Placement',
-  IMPLANT = 'Dental Implant',
-  ORTHODONTICS = 'Orthodontic Treatment',
-  EMERGENCY = 'Emergency Visit',
-  FOLLOW_UP = 'Follow-up Visit'
+  CONSULTATION = 'CONSULTATION',
+  CLEANING = 'CLEANING',
+  FILLING = 'FILLING',
+  EXTRACTION = 'EXTRACTION',
+  ROOT_CANAL = 'ROOT_CANAL',
+  CROWN = 'CROWN',
+  IMPLANT = 'IMPLANT',
+  ORTHODONTICS = 'ORTHODONTICS',
+  EMERGENCY = 'EMERGENCY',
+  FOLLOW_UP = 'FOLLOW_UP'
 }
 
 export enum AppointmentStatus {
-  SCHEDULED = 'scheduled',
-  CONFIRMED = 'confirmed',
-  IN_PROGRESS = 'in-progress',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-  NO_SHOW = 'no-show',
-  RESCHEDULED = 'rescheduled'
+  SCHEDULED = 'SCHEDULED',
+  CONFIRMED = 'CONFIRMED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  NO_SHOW = 'NO_SHOW',
+  RESCHEDULED = 'RESCHEDULED'
 }
 
 export interface CreateAppointmentRequest {
   patientId: string;
+  patientName: string;
   appointmentDate: Date;
   startTime: string;
   type: AppointmentType;

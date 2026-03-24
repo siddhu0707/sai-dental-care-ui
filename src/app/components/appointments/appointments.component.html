@@ -72,7 +72,7 @@
                       (change)="toggleAppointmentSelection(appointment.id)" class="appointment-checkbox"
                       id="checkbox-{{ appointment.id }}">
                     <label for="checkbox-{{ appointment.id }}" class="checkbox-label">
-                      <h4 class="patient-name">{{ appointment.patientName }}</h4>
+                      <h4 class="patient-name">{{ getPatientName(appointment.patientId) }}</h4>
                       <span class="reminder-status" [class.sent]="appointment.reminder?.sent">
                         {{ appointment.reminder?.sent ? ('appointments.reminderSent' | translate) :
                         ('appointments.noReminder' | translate) }}
@@ -83,10 +83,12 @@
                         translate }}</button>
                       <button (click)="editAppointment(appointment)" class="action-btn small">{{ 'common.edit' |
                         translate }}</button>
-                      <button *ngIf="appointment.status === 'scheduled'" (click)="confirmAppointment(appointment.id)"
-                        class="action-btn small confirm">{{ 'common.confirm' | translate }}</button>
-                      <button *ngIf="appointment.status === 'confirmed'" (click)="markCompleted(appointment.id)"
-                        class="action-btn small complete">{{ 'appointments.complete' | translate }}</button>
+                      <button *ngIf="appointment.status === AppointmentStatus.SCHEDULED"
+                        (click)="confirmAppointment(appointment.id)" class="action-btn small confirm">{{
+                        'common.confirm' | translate }}</button>
+                      <button *ngIf="appointment.status === AppointmentStatus.CONFIRMED"
+                        (click)="markCompleted(appointment.id)" class="action-btn small complete">{{
+                        'appointments.complete' | translate }}</button>
                     </div>
                     <div class="appointment-status" [class]="appointment.status">
                       {{ appointment.status | titlecase }}
@@ -120,7 +122,7 @@
                       (change)="toggleAppointmentSelection(appointment.id)" class="appointment-checkbox"
                       id="checkbox-{{ appointment.id }}">
                     <label for="checkbox-{{ appointment.id }}" class="checkbox-label">
-                      <h4 class="patient-name">{{ appointment.patientName }}</h4>
+                      <h4 class="patient-name">{{ getPatientName(appointment.patientId) }}</h4>
                       <span class="reminder-status" [class.sent]="appointment.reminder?.sent">
                         {{ appointment.reminder?.sent ? ('appointments.reminderSent' | translate) :
                         ('appointments.noReminder' | translate) }}
@@ -131,10 +133,12 @@
                         translate }}</button>
                       <button (click)="editAppointment(appointment)" class="action-btn small">{{ 'common.edit' |
                         translate }}</button>
-                      <button *ngIf="appointment.status === 'scheduled'" (click)="confirmAppointment(appointment.id)"
-                        class="action-btn small confirm">{{ 'common.confirm' | translate }}</button>
-                      <button *ngIf="appointment.status === 'confirmed'" (click)="markCompleted(appointment.id)"
-                        class="action-btn small complete">{{ 'appointments.complete' | translate }}</button>
+                      <button *ngIf="appointment.status === AppointmentStatus.SCHEDULED"
+                        (click)="confirmAppointment(appointment.id)" class="action-btn small confirm">{{
+                        'common.confirm' | translate }}</button>
+                      <button *ngIf="appointment.status === AppointmentStatus.CONFIRMED"
+                        (click)="markCompleted(appointment.id)" class="action-btn small complete">{{
+                        'appointments.complete' | translate }}</button>
                     </div>
                     <div class="appointment-status" [class]="appointment.status">
                       {{ appointment.status | titlecase }}
@@ -194,7 +198,7 @@
           </div>
 
           <div class="appointment-info">
-            <h3 class="patient-name">{{ appointment.patientName }}</h3>
+            <h3 class="patient-name">{{ getPatientName(appointment.patientId) }}</h3>
             <p class="appointment-type">{{ appointment.type }}</p>
             <p class="doctor-name">👨‍���️ {{ appointment.doctorName }}</p>
             <p *ngIf="appointment.notes" class="appointment-notes">{{ appointment.notes }}</p>
@@ -212,9 +216,9 @@
           <div class="appointment-actions-all">
             <button (click)="viewAppointment(appointment)" class="action-btn view">View</button>
             <button (click)="editAppointment(appointment)" class="action-btn edit">Edit</button>
-            <button *ngIf="appointment.status === 'scheduled'" (click)="confirmAppointment(appointment.id)"
-              class="action-btn confirm">Confirm</button>
-            <button *ngIf="appointment.status === 'confirmed'" (click)="markCompleted(appointment.id)"
+            <button *ngIf="appointment.status === AppointmentStatus.SCHEDULED"
+              (click)="confirmAppointment(appointment.id)" class="action-btn confirm">Confirm</button>
+            <button *ngIf="appointment.status === AppointmentStatus.CONFIRMED" (click)="markCompleted(appointment.id)"
               class="action-btn complete">Complete</button>
             <button (click)="cancelAppointment(appointment.id)" class="action-btn cancel">Cancel</button>
             <button *ngIf="!appointment.reminder?.sent" (click)="sendReminder(appointment.id)"
@@ -255,7 +259,7 @@
             <div *ngFor="let time of workingHours" class="calendar-cell">
               <ng-container *ngFor="let appointment of getAppointmentsForTimeSlot(day, time)">
                 <div class="calendar-appointment" [class]="appointment.status">
-                  <div class="appointment-title">{{ appointment.patientName }}</div>
+                  <div class="appointment-title">{{ getPatientName(appointment.patientId) }}</div>
                   <div class="appointment-type">{{ appointment.type }}</div>
                 </div>
               </ng-container>
@@ -370,7 +374,7 @@
     <div *ngIf="selectedAppointment" class="appointment-details">
       <div class="detail-grid">
         <div class="detail-item">
-          <strong>Patient:</strong> {{ selectedAppointment.patientName }}
+          <strong>Patient:</strong> {{ getPatientName(selectedAppointment.patientId) }}
         </div>
         <div class="detail-item">
           <strong>Date:</strong> {{ selectedAppointment.appointmentDate | date:'fullDate' }}
@@ -433,7 +437,7 @@
             <ng-container *ngFor="let appointment of todayAppointments">
               <div *ngIf="appointment.id === appointmentId" class="selected-appointment">
                 <span class="patient-info">
-                  👤 {{ appointment.patientName }} - {{ appointment.startTime }}
+                  👤 {{ getPatientName(appointment.patientId) }} - {{ appointment.startTime }}
                   <span class="appointment-day today">{{ 'common.today' | translate }}</span>
                 </span>
                 <span class="appointment-type">{{ appointment.type }}</span>
@@ -443,7 +447,7 @@
             <ng-container *ngFor="let appointment of tomorrowAppointments">
               <div *ngIf="appointment.id === appointmentId" class="selected-appointment">
                 <span class="patient-info">
-                  👤 {{ appointment.patientName }} - {{ appointment.startTime }}
+                  👤 {{ getPatientName(appointment.patientId) }} - {{ appointment.startTime }}
                   <span class="appointment-day tomorrow">{{ 'common.tomorrow' | translate }}</span>
                 </span>
                 <span class="appointment-type">{{ appointment.type }}</span>
