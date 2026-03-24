@@ -159,7 +159,7 @@ public class DataInitializationService implements CommandLineRunner {
         Appointment appointment2 = new Appointment();
         appointment2.setPatientId(patient2.getId());
         appointment2.setPatientName(patient2.getFirstName() + " " + patient2.getLastName());
-        appointment2.setDoctorName("Dr. Smith");
+        appointment2.setDoctorName("Dr. Snahe Funde");
         appointment2.setAppointmentDate(LocalDate.of(2024, 1, 21));
         appointment2.setStartTime("10:30");
         appointment2.setEndTime("11:30");

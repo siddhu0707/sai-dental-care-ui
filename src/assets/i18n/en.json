@@ -1,0 +1,10 @@
+{
+    "patients": {
+        "selectGender": "Select Gender",
+        "gender": {
+            "male": "Male",
+            "female": "Female",
+            "other": "Other"
+        }
+    }
+}

@@ -105,7 +105,7 @@ export class AppointmentsComponent implements OnInit {
       startTime: ['', Validators.required],
       type: ['', Validators.required],
       duration: [30, Validators.required],
-      doctorName: ['Dr. Smith'],
+      doctorName: ['Dr. Sneha Funde'],
       notes: ['']
     });
   }
@@ -277,15 +277,17 @@ export class AppointmentsComponent implements OnInit {
   }
 
   previousWeek() {
-    this.currentWeekStart.setDate(this.currentWeekStart.getDate() - 7);
-    this.currentWeekEnd.setDate(this.currentWeekEnd.getDate() - 7);
+    this.currentWeekStart = new Date(this.currentWeekStart.getFullYear(), this.currentWeekStart.getMonth(), this.currentWeekStart.getDate() - 7);
+    this.currentWeekEnd = new Date(this.currentWeekEnd.getFullYear(), this.currentWeekEnd.getMonth(), this.currentWeekEnd.getDate() - 7);
     this.generateWeekDays();
+    this.loadData();
   }
 
   nextWeek() {
-    this.currentWeekStart.setDate(this.currentWeekStart.getDate() + 7);
-    this.currentWeekEnd.setDate(this.currentWeekEnd.getDate() + 7);
+    this.currentWeekStart = new Date(this.currentWeekStart.getFullYear(), this.currentWeekStart.getMonth(), this.currentWeekStart.getDate() + 7);
+    this.currentWeekEnd = new Date(this.currentWeekEnd.getFullYear(), this.currentWeekEnd.getMonth(), this.currentWeekEnd.getDate() + 7);
     this.generateWeekDays();
+    this.loadData();
   }
 
   getAppointmentsForTimeSlot(date: Date, time: string): Appointment[] {

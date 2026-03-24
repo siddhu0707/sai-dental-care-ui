@@ -11,16 +11,11 @@
       </button>
     </div>
   </header>
-  
+
   <div class="patients-controls">
     <div class="search-container">
-      <input
-        type="text"
-        [placeholder]="'patients.searchPlaceholder' | translate"
-        [(ngModel)]="searchQuery"
-        (input)="onSearch()"
-        class="search-input"
-      >
+      <input type="text" [placeholder]="'patients.searchPlaceholder' | translate" [(ngModel)]="searchQuery"
+        (input)="onSearch()" class="search-input">
       <span class="search-icon">🔍</span>
     </div>
 
@@ -32,7 +27,7 @@
       </select>
     </div>
   </div>
-  
+
   <div class="patients-grid">
     <div *ngFor="let patient of filteredPatients" class="patient-card">
       <div class="patient-avatar">
@@ -52,11 +47,12 @@
       <div class="patient-actions">
         <button (click)="viewPatient(patient)" class="action-btn view">{{ 'common.view' | translate }}</button>
         <button (click)="editPatient(patient)" class="action-btn edit">{{ 'common.edit' | translate }}</button>
-        <button (click)="sendWhatsAppMessage(patient)" class="action-btn whatsapp" title="Send WhatsApp Message">📱</button>
+        <button (click)="sendWhatsAppMessage(patient)" class="action-btn whatsapp"
+          title="Send WhatsApp Message">📱</button>
         <button (click)="deletePatient(patient.id)" class="action-btn delete">{{ 'common.delete' | translate }}</button>
       </div>
     </div>
-    
+
     <div *ngIf="filteredPatients.length === 0" class="empty-state">
       <div class="empty-icon">👥</div>
       <h3>{{ 'patients.noPatients' | translate }}</h3>
@@ -79,50 +75,50 @@
           <label>{{ 'patients.firstName' | translate }} *</label>
           <input type="text" formControlName="firstName" class="form-input" />
           <div *ngIf="patientForm.get('firstName')?.errors?.['required'] && patientForm.get('firstName')?.touched"
-               class="error-message">{{ 'validation.firstNameRequired' | translate }}</div>
+            class="error-message">{{ 'validation.firstNameRequired' | translate }}</div>
         </div>
 
         <div class="form-group">
           <label>{{ 'patients.lastName' | translate }} *</label>
           <input type="text" formControlName="lastName" class="form-input" />
           <div *ngIf="patientForm.get('lastName')?.errors?.['required'] && patientForm.get('lastName')?.touched"
-               class="error-message">{{ 'validation.lastNameRequired' | translate }}</div>
+            class="error-message">{{ 'validation.lastNameRequired' | translate }}</div>
         </div>
 
         <div class="form-group">
           <label>{{ 'common.email' | translate }} *</label>
           <input type="email" formControlName="email" class="form-input" />
           <div *ngIf="patientForm.get('email')?.errors?.['required'] && patientForm.get('email')?.touched"
-               class="error-message">{{ 'validation.emailRequired' | translate }}</div>
+            class="error-message">{{ 'validation.emailRequired' | translate }}</div>
           <div *ngIf="patientForm.get('email')?.errors?.['email'] && patientForm.get('email')?.touched"
-               class="error-message">{{ 'validation.emailValid' | translate }}</div>
+            class="error-message">{{ 'validation.emailValid' | translate }}</div>
         </div>
 
         <div class="form-group">
           <label>{{ 'common.phone' | translate }} *</label>
           <input type="tel" formControlName="phone" class="form-input" />
           <div *ngIf="patientForm.get('phone')?.errors?.['required'] && patientForm.get('phone')?.touched"
-               class="error-message">{{ 'validation.phoneRequired' | translate }}</div>
+            class="error-message">{{ 'validation.phoneRequired' | translate }}</div>
         </div>
 
         <div class="form-group">
           <label>{{ 'patients.dateOfBirth' | translate }} *</label>
           <input type="date" formControlName="dateOfBirth" class="form-input" />
           <div *ngIf="patientForm.get('dateOfBirth')?.errors?.['required'] && patientForm.get('dateOfBirth')?.touched"
-               class="error-message">{{ 'validation.dateOfBirthRequired' | translate }}</div>
+            class="error-message">{{ 'validation.dateOfBirthRequired' | translate }}</div>
         </div>
 
         <div class="form-group">
           <label>{{ 'patients.gender' | translate }}</label>
           <select formControlName="gender" class="form-input">
-            <option value="">{{ 'patients.selectGender' | translate }}</option>
-            <option value="Male">{{ 'patients.gender.male' | translate }}</option>
-            <option value="Female">{{ 'patients.gender.female' | translate }}</option>
-            <option value="Other">{{ 'patients.gender.other' | translate }}</option>
+            <option value="" disabled selected>{{ 'patients.selectGender' | translate }}</option>
+            <option value="male">{{ 'patients.male' | translate }}</option>
+            <option value="female">{{ 'patients.female' | translate }}</option>
+            <option value="other">{{ 'patients.other' | translate }}</option>
           </select>
         </div>
       </div>
-      
+
       <div class="form-section">
         <h3>{{ 'common.address' | translate }}</h3>
         <div formGroupName="address" class="form-grid">
@@ -147,7 +143,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="form-section">
         <h3>{{ 'patients.emergencyContact' | translate }}</h3>
         <div formGroupName="emergencyContact" class="form-grid">
@@ -175,19 +171,19 @@
           </div>
         </div>
       </div>
-      
+
       <div class="form-section">
         <h3>{{ 'patients.medicalInfo' | translate }}</h3>
         <div class="form-group full-width">
           <label>{{ 'patients.medicalHistory' | translate }} ({{ 'patients.commaSeparated' | translate }})</label>
           <textarea formControlName="medicalHistory" class="form-textarea"
-                   [placeholder]="'patients.medicalHistoryPlaceholder' | translate"></textarea>
+            [placeholder]="'patients.medicalHistoryPlaceholder' | translate"></textarea>
         </div>
 
         <div class="form-group full-width">
           <label>{{ 'patients.allergies' | translate }} ({{ 'patients.commaSeparated' | translate }})</label>
           <textarea formControlName="allergies" class="form-textarea"
-                   [placeholder]="'patients.allergiesPlaceholder' | translate"></textarea>
+            [placeholder]="'patients.allergiesPlaceholder' | translate"></textarea>
         </div>
       </div>
 
@@ -195,7 +191,7 @@
         <div class="form-group full-width">
           <label>{{ 'common.notes' | translate }}</label>
           <textarea formControlName="notes" class="form-textarea"
-                   [placeholder]="'patients.notesPlaceholder' | translate"></textarea>
+            [placeholder]="'patients.notesPlaceholder' | translate"></textarea>
         </div>
       </div>
 
@@ -215,7 +211,8 @@
     <div class="modal-header">
       <h2>{{ 'patients.patientDetails' | translate }}</h2>
       <div class="header-actions">
-        <button (click)="sendWhatsAppMessage(selectedPatient!)" class="action-btn whatsapp" title="Send WhatsApp Message">
+        <button (click)="sendWhatsAppMessage(selectedPatient!)" class="action-btn whatsapp"
+          title="Send WhatsApp Message">
           📱 {{ 'patients.sendMessage' | translate }}
         </button>
         <button (click)="sendWelcomeMessage(selectedPatient!)" class="action-btn welcome" title="Send Welcome Message">
@@ -224,7 +221,7 @@
         <button (click)="closeModal()" class="close-btn">✕</button>
       </div>
     </div>
-    
+
     <div *ngIf="selectedPatient" class="patient-details">
       <div class="patient-header">
         <div class="patient-avatar large">
@@ -249,7 +246,8 @@
             <strong>{{ 'common.phone' | translate }}:</strong> {{ selectedPatient.phone }}
           </div>
           <div class="detail-item">
-            <strong>{{ 'patients.dateOfBirth' | translate }}:</strong> {{ selectedPatient.dateOfBirth | date:'MMM d, y' }}
+            <strong>{{ 'patients.dateOfBirth' | translate }}:</strong> {{ selectedPatient.dateOfBirth | date:'MMM d, y'
+            }}
           </div>
           <div class="detail-item" *ngIf="selectedPatient.gender">
             <strong>{{ 'patients.gender' | translate }}:</strong> {{ selectedPatient.gender }}
@@ -257,10 +255,11 @@
           <div class="detail-item">
             <strong>{{ 'common.address' | translate }}:</strong><br>
             {{ selectedPatient.address.street }}<br>
-            {{ selectedPatient.address.city }}, {{ selectedPatient.address.state }} {{ selectedPatient.address.zipCode }}
+            {{ selectedPatient.address.city }}, {{ selectedPatient.address.state }} {{ selectedPatient.address.zipCode
+            }}
           </div>
         </div>
-        
+
         <div class="detail-section">
           <h3>{{ 'patients.emergencyContact' | translate }}</h3>
           <div class="detail-item">
@@ -270,7 +269,8 @@
             <strong>{{ 'common.phone' | translate }}:</strong> {{ selectedPatient.emergencyContact.phone }}
           </div>
           <div class="detail-item">
-            <strong>{{ 'patients.relationship' | translate }}:</strong> {{ selectedPatient.emergencyContact.relationship }}
+            <strong>{{ 'patients.relationship' | translate }}:</strong> {{ selectedPatient.emergencyContact.relationship
+            }}
           </div>
         </div>
 
@@ -311,7 +311,8 @@
             </ng-template>
           </div>
           <div class="detail-item" *ngIf="selectedPatient.nextAppointment">
-            <strong>{{ 'patients.nextAppointment' | translate }}:</strong> {{ selectedPatient.nextAppointment | date:'MMM d, y' }}
+            <strong>{{ 'patients.nextAppointment' | translate }}:</strong> {{ selectedPatient.nextAppointment |
+            date:'MMM d, y' }}
           </div>
         </div>
       </div>
